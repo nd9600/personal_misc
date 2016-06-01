@@ -33,40 +33,58 @@ def get_domain(url, tlds):
             # returns "abcde.co.uk"
 
     raise ValueError("Domain not in global list of TLDs")
-
-hitNetlocs = ["reddit.com"]
+    
+firstURL = "http://www.reddit.com"
+netlocsAlreadyInQueue = [urlparse(firstURL).netloc]
 urlQueue = Queue.Queue()
-urlQueue.put("http://www.reddit.com")
+urlQueue.put(firstURL)
 
-count = 0
+numberOfRequests = 0
+
+print ""
+print "#################"
+print "firstURL:", firstURL
 
 headers = { 'User-Agent' : 'Mozilla/5.0' }
 while (not urlQueue.empty()):
     
-    originalURL = urlQueue.get()
+    hitURL = urlQueue.get()
+    hitNetloc = urlparse(hitURL).netloc
+    print ""
+    print "#################"
+    print "hitURL:", hitURL
+    time.sleep(2)
+    
     headers = { 'User-Agent' : 'Mozilla/5.0' }
-    request = urllib2.Request(originalURL, None, headers)
+    request = urllib2.Request(hitURL, None, headers)
     try:
-        html = urllib2.urlopen(request).read()
+        openedRequest = urllib2.urlopen(request, timeout = 5)
+        html = openedRequest.read()
+        numberOfRequests = numberOfRequests + 1
         links = re.findall('"((http)s?://.*?)"', html)
         links = [link[0] for link in links]
 
         for link in links:
-            oldNetloc = urlparse(originalURL).netloc
             newNetloc = get_domain(link, tlds)
                 
-            if (newNetloc not in hitNetlocs):
-
-                hitNetlocs.append(newNetloc)
-                count = count + 1
+            if (newNetloc not in netlocsAlreadyInQueue):
+                netlocsAlreadyInQueue.append(newNetloc)
                 
                 newScheme = urlparse(link).scheme
                 newURL = newScheme + "://" + newNetloc
                 urlQueue.put(newURL)
                 print ""
-                print "hitNetlocs:", hitNetlocs
+                print "netlocsAlreadyInQueue:", netlocsAlreadyInQueue
                 print "urlQueue.size():", urlQueue.qsize()
-                print "count:", count
+                print "totalQueueSize:", len(netlocsAlreadyInQueue)
+                print "numberOfRequests:", numberOfRequests
                 #time.sleep(0.5)
-    except Exception:
+    except Exception as e:
+        print "Exception:", e
         pass
+    finally:
+        try:
+            openedRequest.close()
+        except Exception as e: 
+            print "Exception:", e
+            pass
