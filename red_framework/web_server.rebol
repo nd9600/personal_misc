@@ -5,7 +5,9 @@ Rebol [
 
 web-dir: %.   ; the path to where you store your web files
 
-listen-port: open/lines tcp://:8000  ; port used for web connections
+port: 8000
+
+listen-port: open/lines append tcp://: port  ; port used for web connections
 
 errors: [
     400 "Forbidden" "No permission to access:"
@@ -45,15 +47,24 @@ forever [
     mime: "text/plain"
 
     ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
-    parse buffer ["get" ["http" | "/ " | copy file to " "]]
+    parse buffer ["GET" 
+                    [
+                        "http" 
+                        | "/ " 
+                        | copy file to " "
+                    ]
+                 ]
+
+    print append copy "file is: " file
 
     ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
-    parse file [thru "." [
-            "html" (mime: "text/html") |
-            "gif"  (mime: "image/gif") |
-            "jpg"  (mime: "image/jpeg")
-        ]
-    ]
+    parse file [thru "." 
+                    [
+                        "html" (mime: "text/html") 
+                        | "gif"  (mime: "image/gif") 
+                        | "jpg"  (mime: "image/jpeg")
+                    ]
+               ]
 
     ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
     any [
