@@ -17,7 +17,7 @@ errors: [
 send-error: function [err-num file] [err] [
     err: find errors err-num
     insert http-port join "HTTP/1.0 " [
-        err-num " " err/2 "^/Content-type: text/html^/^/" 
+        err-num " " err/2 "^/Content-type: text/html^/^/"
         <HTML> <TITLE> err/2 </TITLE>
         "<BODY><H1>SERVER-ERROR</H1><P>REBOL Webserver Error:"
         err/3 " " file newline <P> </BODY> </HTML>
@@ -27,10 +27,15 @@ send-error: function [err-num file] [err] [
 send-page: func [data mime] [
     insert data rejoin ["HTTP/1.0 200 OK^/Content-type: " mime "^/^/"]
     write-io http-port data length? data
-] 
+]
 
 ; holds the request information which is printed out as connections are made
 buffer: make string! 1024  ; will auto-expand if needed
+
+routes: to-map [
+    "/route_test" "test.html"
+    "/route_test_2" "test2.html"
+]
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
@@ -41,27 +46,31 @@ forever [
     while [not empty? request: first http-port][
         repend buffer [request newline]
     ]
-    repend buffer ["Address: " http-port/host newline] 
+    repend buffer ["Address: " http-port/host newline]
     print buffer
     file: "index.html"
     mime: "text/plain"
 
     ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
-    parse buffer ["GET" 
+    parse buffer ["GET"
                     [
-                        "http" 
-                        | "/ " 
+                        "http"
+                        | "/ "
                         | copy file to " "
                     ]
                  ]
 
     print append copy "file is: " file
 
+    route: select routes file
+
+    print append copy "route is: " route
+
     ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
-    parse file [thru "." 
+    parse file [thru "."
                     [
-                        "html" (mime: "text/html") 
-                        | "gif"  (mime: "image/gif") 
+                        "html" (mime: "text/html")
+                        | "gif"  (mime: "image/gif")
                         | "jpg"  (mime: "image/jpeg")
                     ]
                ]
