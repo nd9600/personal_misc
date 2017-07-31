@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from __future__ import with_statement
 import urllib2
 import time
@@ -34,7 +36,7 @@ def get_domain(url, tlds):
 
     raise ValueError("Domain not in global list of TLDs")
     
-firstURL = "http://www.reddit.com"
+firstURL = "http://www.wikipedia.org"
 netlocsAlreadyInQueue = [urlparse(firstURL).netloc]
 urlQueue = Queue.Queue()
 urlQueue.put(firstURL)
