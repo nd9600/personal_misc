@@ -1,7 +1,34 @@
 Rebol [
-    Title: "Tiny Web Server"
+    Title: "Tiny Framework"
     Documentation: http://www.rebol.net/cookbook/recipes/0057.html
 ]
+
+f_reduce: func [
+        "The functional reduce"
+        f "the function to use" 
+        block [block!] "the block to reduce"
+    ] [
+    probe block
+    while [not tail? block] [
+        block: change/part block f first block 1
+    ]   
+]
+
+f_fold: func [
+        "Applies the functional left fold"
+        f "the function to use" 
+        init "the initial value"
+        block [block!] "the block to fold"
+    ] [
+    result: init
+    while [not tail? block] [
+        result: f result first block
+        block: next block
+    ]
+    result
+]
+
+root-dir: system/options/path
 
 web-dir: %.   ; the path to where you store your web files
 
@@ -32,10 +59,12 @@ send-page: func [data mime] [
 ; holds the request information which is printed out as connections are made
 buffer: make string! 1024  ; will auto-expand if needed
 
-routes: to-map [
-    "/route_test" "test.html"
-    "/route_test_2" "test2.html"
-]
+do %routing/routing.r
+routes: get-routes
+
+probe routes
+probe select routes "/route_test"
+halt
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
@@ -47,7 +76,6 @@ forever [
         repend buffer [request newline]
     ]
     repend buffer ["Address: " http-port/host newline]
-    print buffer
     file: "index.html"
     mime: "text/plain"
 
