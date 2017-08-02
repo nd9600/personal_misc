@@ -15,7 +15,7 @@ f_reduce: func [
 ]
 
 f_fold: func [
-        "Applies the functional left fold"
+        "The functional left fold"
         f "the function to use" 
         init "the initial value"
         block [block!] "the block to fold"
@@ -27,6 +27,30 @@ f_fold: func [
     ]
     result
 ]
+
+f_filter: func [
+        "The functional filter"
+        condition "the condition to check" 
+        block [block!] "the block to fold"
+    ] [
+    result: copy []
+    while [not tail? block] [
+        print ""
+        probe first block
+        probe append copy condition first block
+        probe do append copy condition first block
+        if (do append copy condition first block) [
+            probe first block
+            append result first block
+        ]
+        block: next block
+    ]
+    result
+]
+
+a: [1 2 3 4 1 7 98 3]
+probe f_filter [greater? 3] a
+halt
 
 root-dir: system/options/path
 
