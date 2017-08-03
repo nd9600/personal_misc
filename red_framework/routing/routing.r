@@ -2,33 +2,79 @@ Rebol [
     Title: "Tiny Framework: routing"
 ]
 
+accepted_route_methods: ["ANY" "GET" "POST"]
+
 get-routes: func [
     "gets the app's routes"
-    /local current-dir route_files routes] [
+    /local current-dir routes
+] [
     current-dir: system/options/path
     change-dir root-dir/routing
-    routes: copy []
+
+    ; 'routes is a series like ["ANY" [] "GET" [] "POST" []]
+    routes: copy/deep accepted_route_methods
+    loop length? routes [routes: insert/only next routes copy []]
+    routes: head routes
 
     ;loads the data for each routing file
     route_files: [%routes.r %routes2.r]
     f_reduce :load route_files
 
-    probe route_files
-
-    ;loops through every routing file
+    ; loops through every routing file
     forall route_files [
-        ;if the current variable is called routes, add its content to the routes hashmap
+        ; if the current variable is called routes, add its content to the routes hashmap
         if (equal? first route_files 'routes) [
-            actual_route: first next route_files
-            f_fold :append routes actual_route
+
+            routes_from_this_file: first next route_files
+            foreach actual_route routes_from_this_file [
+
+                ; if the route_method is ANY, GET or POST, add it to the appropriate series
+                ; otherwise, add it to the GET series
+                route_method: first actual_route
+                either (find accepted_route_methods route_method) [
+                    route_url_and_controller: next actual_route
+                    append select routes route_method route_url_and_controller
+                ] [
+                    append select routes "GET" actual_route
+                ]
+            ]
         ]
     ]
 
     ;speeds up finding routes, but the initial creation is slower
-    routes: to-map routes
+    ;routes: to-map routes
 
     change-dir current-dir
     return routes
+]
+
+find-route: func [
+    routes [series!] "the routes series to search in"
+    route_method [string!] "GET or POST"
+    route_url "the URL of the route"
+] [
+    if (not find accepted_route_methods route_method) [
+        do make error! rejoin [route_method " is not an accepted route method. Only" accepted_route_methods " are accepted"]
+    ]
+    
+    ; first checks against "ANY" routes, then the specific route method
+    routes_for_method: select routes "ANY"
+    route_controller: get-route-controller routes_for_method route_url
+
+    if (not route_controller) [
+        routes_for_method: select routes route_method
+        route_controller: get-route-controller routes_for_method route_url
+    ]
+    return route_controller
+]
+
+get-route-controller: func [
+    "gets the route controller for a route URL"
+    routes [series!] "the routes to check against"
+    route_url [string!] "the URL to check"
+] [
+    route_controller: select routes route_url
+    return route_controller
 ]
 
 ; routes charset is aAzZ-_/, parameters are delimited by { and }, the name inbetween is passed to controller as a variable
