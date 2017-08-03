@@ -1,6 +1,5 @@
 Rebol [
     Title: "Tiny Framework: routing"
-    Documentation: http://www.rebol.net/cookbook/recipes/0057.html
 ]
 
 get-routes: func [
@@ -18,7 +17,7 @@ get-routes: func [
 
     ;loops through every routing file
     forall route_files [
-        ;if the current thing is called routes, add its content to the routes hashmap
+        ;if the current variable is called routes, add its content to the routes hashmap
         if (equal? first route_files 'routes) [
             actual_route: first next route_files
             f_fold :append routes actual_route

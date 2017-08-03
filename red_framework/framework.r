@@ -3,54 +3,8 @@ Rebol [
     Documentation: http://www.rebol.net/cookbook/recipes/0057.html
 ]
 
-f_reduce: func [
-        "The functional reduce"
-        f "the function to use" 
-        block [block!] "the block to reduce"
-    ] [
-    probe block
-    while [not tail? block] [
-        block: change/part block f first block 1
-    ]   
-]
-
-f_fold: func [
-        "The functional left fold"
-        f "the function to use" 
-        init "the initial value"
-        block [block!] "the block to fold"
-    ] [
-    result: init
-    while [not tail? block] [
-        result: f result first block
-        block: next block
-    ]
-    result
-]
-
-f_filter: func [
-        "The functional filter"
-        condition "the condition to check" 
-        block [block!] "the block to fold"
-    ] [
-    result: copy []
-    while [not tail? block] [
-        print ""
-        probe first block
-        probe append copy condition first block
-        probe do append copy condition first block
-        if (do append copy condition first block) [
-            probe first block
-            append result first block
-        ]
-        block: next block
-    ]
-    result
-]
-
-a: [1 2 3 4 1 7 98 3]
-probe f_filter [greater? 3] a
-halt
+;brings in the base FP functions
+do %functional.r
 
 root-dir: system/options/path
 
@@ -83,11 +37,16 @@ send-page: func [data mime] [
 ; holds the request information which is printed out as connections are made
 buffer: make string! 1024  ; will auto-expand if needed
 
+;brings in the routing functions
 do %routing/routing.r
 routes: get-routes
 
 probe routes
 probe select routes "/route_test"
+halt
+
+a: [1 2 3 4 1 7 98 3]
+probe f_filter lambda [greater? ? 3] a
 halt
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.

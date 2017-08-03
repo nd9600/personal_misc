@@ -1,6 +1,6 @@
 Rebol [
     Title: "Tiny Framework: parameter routes"
-    Documentation: http://www.rebol.net/cookbook/recipes/0057.html
+    Description: "routing.r will read anything in 'routes into the app's routes"
 ]
 
 routes: [
