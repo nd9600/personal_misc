@@ -2,7 +2,7 @@ Rebol [
     Title: "Tiny Framework: routing"
 ]
 
-accepted_route_methods: ["ANY" "GET" "POST"]
+accepted_route_methods: ["ANY" "GET" "POST" "HEAD" "PUT" "DELETE" "CONNECT" "OPTIONS" "TRACE" "PATCH"]
 
 get-routes: func [
     "gets the app's routes"
@@ -73,10 +73,27 @@ find-route: func [
 get-route-controller: func [
     "gets the route controller for a route URL, checked against the routes for a specific HTTP method"
     routes_for_method [series!] "the routes to check against"
-    route_url [string!] "the URL to check"
+    url_to_check [string!] "the URL to check"
     /local route_controller
 ] [
-    route_controller: select routes_for_method route_url
+    ; tries to find a route in the ones without parameters first
+    route_controller: select routes_for_method url_to_check
+    
+    ; if that fails, loop through all other routes - 
+    ;     iterate over the route URL until the tail
+    ;     if route_url[i] == url_to_check[i], continue
+    ;     else, if route_url[i] == "{",
+    ;         try to match char after "}" in route_url with first matching char in url_to_check
+    ;         if match, copy string in between "{" and "}" to variable
+    ;         if no match, go to next route
+    ;     if at tail, return route
+    ; else, go to next route
+    ; return none
+    if (not route_controller) [
+        foreach route routes_for_method [
+            probe route
+        ]
+    ]
     return route_controller
 ]
 
