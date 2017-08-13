@@ -6,11 +6,13 @@ Rebol [
 ;brings in the base FP functions
 do %functional.r
 
-root-dir: system/options/path
+root-dir: what-dir
 
 web-dir: %.   ; the path to where you store your web files
 
 port: 8000
+
+route_methods: ["GET" | "POST" | "HEAD" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH"]
 
 listen-port: open/lines append tcp://: port  ; port used for web connections
 
@@ -42,7 +44,7 @@ do %routing/routing.r
 routes: get-routes
 
 probe find-route routes "GET" "/route_test"
-halt
+;halt
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
@@ -58,19 +60,22 @@ forever [
     mime: "text/plain"
 
     ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
-    parse buffer ["GET"
+    parse buffer [
+                    [
+                        copy method route_methods
+                    ]
                     [
                         "http"
                         | "/ "
                         | copy file to " "
                     ]
                  ]
+                 
+    route: find-route routes method file
 
+    print append copy "method is: " method 
     print append copy "file is: " file
-
-    route: select routes file
-
-    print append copy "route is: " route
+    print append copy "route is: " route    
 
     ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
     parse file [thru "."
@@ -90,4 +95,5 @@ forever [
 
     ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
     close http-port
-    ]
+    halt
+]

@@ -8,6 +8,7 @@ get-routes: func [
     "gets the app's routes"
     /local current-dir routes
 ] [
+    ;changes to the directory where routes are defined first, then changes back after finding the route
     current-dir: system/options/path
     change-dir root-dir/routing
 
@@ -16,7 +17,7 @@ get-routes: func [
     loop length? routes [routes: insert/only next routes copy []]
     routes: head routes
 
-    ;loads the data for each routing file
+    ; loads the data for each routing file
     route_files: [%routes.r %routes2.r]
     f_reduce :load route_files
 
@@ -24,7 +25,6 @@ get-routes: func [
     forall route_files [
         ; if the current variable is called routes, add its content to the routes hashmap
         if (equal? first route_files 'routes) [
-
             routes_from_this_file: first next route_files
             foreach actual_route routes_from_this_file [
 
@@ -49,9 +49,11 @@ get-routes: func [
 ]
 
 find-route: func [
+    "gets the route controller for a route URL, checked against the routes for all HTTP methods"
     routes [series!] "the routes series to search in"
     route_method [string!] "GET or POST"
     route_url "the URL of the route"
+    /local routes_for_method route_controller
 ] [
     if (not find accepted_route_methods route_method) [
         do make error! rejoin [route_method " is not an accepted route method. Only" accepted_route_methods " are accepted"]
@@ -69,11 +71,12 @@ find-route: func [
 ]
 
 get-route-controller: func [
-    "gets the route controller for a route URL"
-    routes [series!] "the routes to check against"
+    "gets the route controller for a route URL, checked against the routes for a specific HTTP method"
+    routes_for_method [series!] "the routes to check against"
     route_url [string!] "the URL to check"
+    /local route_controller
 ] [
-    route_controller: select routes route_url
+    route_controller: select routes_for_method route_url
     return route_controller
 ]
 
