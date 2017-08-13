@@ -118,12 +118,16 @@ get-route-controller: func [
                         if (equal? first route first url_to_check) [
                             true
                         ]
-                        ;parameter check
-                        if (equal? first route "{") [
-                            print "br found, matching with br"
-                            true
+
+                        if (equal? first route #"{") [
+                            probe "{ found, matching with }"
+                            parameters_match: consume-parameter route url_to_check
+                            either parameters_match [
+                            
+                            ] [
+                                break
+                            ]
                         ]
-                        ;parameter check
                         break
                     ]
                     
@@ -143,6 +147,21 @@ get-route-controller: func [
     ]
     return route_controller
 ]
+
+consume-parameter: func [
+    "matches and consumes parameters in defined routes and URLs"
+    route [string!] "the defined route with the parameter"
+    url_to_check [string!] "the URL with the parameter"
+    /local parsing_rule
+    ] [
+        ;if match,
+        ;   return string to between "}"
+        ;if no match,
+        ;   return false
+        probe route
+        probe url_to_check
+        return true
+    ]
 
 ; routes charset is aAzZ-_/, parameters are delimited by { and }, the string inbetween is passed to controller as a variable
 ; parameters are any string
