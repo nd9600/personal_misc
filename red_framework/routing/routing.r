@@ -79,19 +79,57 @@ get-route-controller: func [
     ; tries to find a route in the ones without parameters first
     route_controller: select routes_for_method url_to_check
     
+    ; maybe remove a route if it doesn't have a parameter in it
+    
     ; if that fails, loop through all other routes - 
     ;     iterate over the route URL until the tail
-    ;     if route_url[i] == url_to_check[i], continue
-    ;     else, if route_url[i] == "{",
-    ;         try to match char after "}" in route_url with first matching char in url_to_check
-    ;         if match, copy string in between "{" and "}" to variable
-    ;         if no match, go to next route
-    ;     if at tail, return route
-    ; else, go to next route
+    ;         if route_url[i] == url_to_check[i],
+    ;             continue
+    ;         elseif route_url[i] == "{",
+    ;             try to match char after "}" in route_url with first matching char in url_to_check
+    ;             if match,
+    ;                 copy string in between "{" and "}" to variable
+    ;             if no match,
+    ;                 break and go to next route
+    ;         else,
+    ;             break and go to next route
+    ;
+    ;         if next char at tail,
+    ;             return route
+    ;         else,
+    ;             increment chars
     ; return none
+    
+    probe url_to_check
+    probe routes_for_method
     if (not route_controller) [
         foreach route routes_for_method [
             probe route
+            while [not tail? route] [
+                print ""
+                probe first route
+                probe first url_to_check
+                
+                any [
+                    if (equal? first route first url_to_check) [
+                        true
+                    ]
+                    ;parameter check
+                    if (equal? first route first url_to_check) [
+                        true
+                    ]
+                    ;parameter check
+                    break
+                ]
+                
+                either (tail? next route) [
+                    route_controller: select routes_for_method route
+                    return route_controller
+                ] [
+                    route: next route
+                    url_to_check: next url_to_check
+                ]
+            ]
         ]
     ]
     return route_controller
