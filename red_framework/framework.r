@@ -43,8 +43,8 @@ buffer: make string! 1024  ; will auto-expand if needed
 do %routing/routing.r
 routes: get-routes
 
-;probe find-route routes "GET" "/route_test"
-;halt
+probe find-route routes "GET" "/route_test/123/h"
+halt
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [

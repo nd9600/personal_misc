@@ -82,7 +82,7 @@ get-route-controller: func [
     ; maybe remove a route if it doesn't have a parameter in it
     
     ; if that fails, loop through all other routes - 
-    ;     iterate over the route URL until the tail
+    ;     iterate over the route URL until the tail of it or url_to_check
     ;         if route_url[i] == url_to_check[i],
     ;             continue
     ;         elseif route_url[i] == "{",
@@ -90,50 +90,59 @@ get-route-controller: func [
     ;             if match,
     ;                 copy string in between "{" and "}" to variable
     ;             if no match,
-    ;                 break and go to next route
+    ;                 break
     ;         else,
-    ;             break and go to next route
+    ;             break
     ;
-    ;         if next char at tail,
-    ;             return route
+    ;         if next chars of route and url_to_check at tail,
+    ;             return head of route
     ;         else,
     ;             increment chars
+    ;     reset position of url_to_check
     ; return none
     
     probe url_to_check
     probe routes_for_method
     if (not route_controller) [
         foreach route routes_for_method [
-            probe route
-            while [not tail? route] [
+            if equal? route "/route_test/{parameter}/h" [
+                probe route
+                while [not any [tail? route tail? url_to_check]] [
+                    print ""
+                    probe first route
+                    probe first url_to_check
+                    probe route
+                    probe url_to_check
+                    
+                    any [
+                        if (equal? first route first url_to_check) [
+                            true
+                        ]
+                        ;parameter check
+                        if (equal? first route "{") [
+                            print "br found, matching with br"
+                            true
+                        ]
+                        ;parameter check
+                        break
+                    ]
+                    
+                    either (all [tail? next route tail? next url_to_check]) [
+                        route_controller: select routes_for_method head route
+                        return route_controller
+                    ] [
+                        route: next route
+                        url_to_check: next url_to_check
+                    ]
+                ]
+                url_to_check: head url_to_check
+                probe "end"
                 print ""
-                probe first route
-                probe first url_to_check
-                
-                any [
-                    if (equal? first route first url_to_check) [
-                        true
-                    ]
-                    ;parameter check
-                    if (equal? first route first url_to_check) [
-                        true
-                    ]
-                    ;parameter check
-                    break
-                ]
-                
-                either (tail? next route) [
-                    route_controller: select routes_for_method route
-                    return route_controller
-                ] [
-                    route: next route
-                    url_to_check: next url_to_check
-                ]
             ]
         ]
     ]
     return route_controller
 ]
 
-; routes charset is aAzZ-_/, parameters are delimited by { and }, the name inbetween is passed to controller as a variable
+; routes charset is aAzZ-_/, parameters are delimited by { and }, the string inbetween is passed to controller as a variable
 ; parameters are any string
