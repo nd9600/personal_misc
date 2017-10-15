@@ -1,5 +1,6 @@
 Red [
     Title: "Simulated annealer"
+    Documentation: http://www.theprojectspot.com/tutorial-post/simulated-annealing-algorithm-for-beginners
 ]
 
 should_accept: func [
@@ -11,8 +12,8 @@ should_accept: func [
     either (new_energy < current_energy) [
         return true
     ] [
-        probability: exp (((to-float current_energy) - new_energy) / temperature)
-        return (probability > random 1.0)
+        acceptance_probability: exp (((to-float current_energy) - new_energy) / temperature)
+        return (acceptance_probability > random 1.0)
     ]
 ]
 
