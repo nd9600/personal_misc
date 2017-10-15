@@ -17,30 +17,40 @@ should_accept: func [
     ]
 ]
 
+{
+called like:
+gen: func [random 1000]
+init: 9000
+id: func [a][a]
+annealer :gen init :id
+}
 annealer: func [
     "The simulated annealer driver"
+    solution_generator [any-function!] "generates a solution"
+    initial_solution [any-type!] "the initial solution"
+    energy_puller [any-function!] "gets the energy from a solution"
 ] [
     temperature: 10000.0
     cooling_rate: 0.03
     
-    current_solution: 900
+    current_solution: initial_solution
     
     while [temperature > 1] [
-        new_solution: random 1000
+        new_solution: do solution_generator
         
-        current_energy: current_solution
-        new_energy: new_solution
+        current_energy: energy_puller current_solution
+        new_energy: energy_puller new_solution
         
         if (should_accept current_energy new_energy temperature) [
             current_solution: new_solution
         ]
         temperature: temperature * (1 - cooling_rate)
         
-        probe ""
-        probe append copy "temperature: " temperature
-        probe append copy "new solution: " new_solution
-        probe append copy "current solution: " current_solution
-        do-events/no-wait
+        ;print ""
+        ;print append copy "temperature: " temperature
+        ;print append copy "new solution: " new_solution
+        ;print append copy "current solution: " current_solution
+        ;do-events/no-wait
     ]
     
     print append copy "final solution: " current_solution
