@@ -3,6 +3,15 @@ Red [
     Documentation: http://www.theprojectspot.com/tutorial-post/simulated-annealing-algorithm-for-beginners
 ]
 
+convert_y_coords: func [
+    height [number!]
+    y [number!]
+] [
+    height - y
+]
+
+pprobe: func ['var][probe rejoin [mold/only var ": " do var]]
+
 should_accept: func [
     "The simulated annealer acceptance function - accepts if new_energy > current_energy"
     current_energy [integer!] "the current solution's energy "
@@ -57,25 +66,45 @@ annealer: func [
         if graph [
             append energies (energy_puller current_solution)
         ]
-        
-        ;print ""
-        ;print append copy "temperature: " temperature
-        ;print append copy "acceptance: " acceptance
-        ;print append copy "new solution: " new_solution
-        ;print append copy "current solution: " current_solution
-        ;do-events/no-wait
     ]
     
     print append copy "final solution: " current_solution
     probe energies
     
     if graph [        
+    
+        ;;work out the graph sizes
         num_energies: length? energies
-        max_energy: last sort copy energies
+        sorted_energies: sort copy energies
+        min_energy: first sorted_energies
+        max_energy: last sorted_energies
         
         window_width: 500.0
+        window_size: to-pair window_width
         graph_width: window_width - 100
+        graph_size: to-pair graph_width
         
+        x_difference: graph_width / num_energies
+        y_scale: graph_width / max_energy
+        
+        ;;make the labels
+        y_labels_size: as-pair 35 (graph_width + 10)
+        y_labels_position: as-pair 25 (50 - 7)
+        min_energy_y_coord: convert_y_coords graph_width (min_energy * y_scale)
+        y_min_label_left_position: as-pair 0 min_energy_y_coord
+        y_min_label_right_position: as-pair graph_width min_energy_y_coord
+        y_min_label_positions: reduce [y_min_label_left_position y_min_label_right_position]
+        
+        pprobe y_min_label_positions
+        pprobe [graph_width - min_energy]
+        
+        labels: compose/deep [
+            line-width 1
+            text (as-pair 0 min_energy_y_coord) (to-string min_energy)
+            text 0x0 (to-string max_energy)
+        ]
+        
+        ;;work out the border
         axis_length: graph_width - 1
         bottom_left: as-pair 0 axis_length
         bottom_right: as-pair axis_length axis_length
@@ -83,36 +112,38 @@ annealer: func [
         top_left: as-pair 0 0
         border: reduce [bottom_left bottom_right top_right top_left]
         
-        x_difference: graph_width / num_energies
-        y_scale: graph_width / max_energy
+        pprobe min_energy
+        pprobe min_energy_y_coord
+        pprobe max_energy
         
-        probe num_energies
-        probe x_difference
-        
-        window_size: to-pair window_width
-
+        ;;work out the actual points
         graph_points: copy []
         x: 0
         foreach y energies [
             x: x + x_difference
-            location: as-pair x (y * y_scale)
+            location: as-pair x (convert_y_coords graph_width (y * y_scale))
             append graph_points location     
         ]
-                
+        
+        ;;make the graph
         graph: compose/deep [
-            ; pen pattern flip-y
             line-width 1
             polygon (border)
-            line (graph_points) 
+            line (graph_points)
+            line (y_min_label_positions)
         ] 
-        ;write %graph.txt graph
-
+        
         view [
             size window_size
-            at 225x25
-                text "Annealer results"
-            at 50x50
-                box graph_size draw graph
+            below
+            
+                at 225x25
+                    text "Annealer results"
+                at 50x50
+                    box graph_size draw graph
+            return
+                at y_labels_position
+                    box y_labels_size draw labels
         ]
     ]
 ]
