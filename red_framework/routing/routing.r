@@ -61,13 +61,13 @@ find-route: func [
     
     ; first checks against "ANY" routes, then the specific route method
     routes_for_method: select routes "ANY"
-    route_controller: get-route-controller routes_for_method route_url
-
-    if (not route_controller) [
+    route_controller_results: get-route-controller routes_for_method route_url
+    
+    if (not route_controller_results) [
         routes_for_method: select routes route_method
-        route_controller: get-route-controller routes_for_method route_url
+        route_controller_results: get-route-controller routes_for_method route_url
     ]
-    return route_controller
+    return route_controller_results
 ]
 
 get-route-controller: func [
@@ -103,17 +103,13 @@ get-route-controller: func [
     
     probe url_to_check
     probe routes_for_method
-    if (not route_controller) [
+    if (not route_controller) [    
         foreach route routes_for_method [
+            parameters: copy []
+        
             if equal? route "/route_test/{parameter}/h" [
                 probe route
-                while [not any [tail? route tail? url_to_check]] [
-                    print ""
-                    probe first route
-                    probe first url_to_check
-                    probe route
-                    probe url_to_check
-                    
+                while [not any [tail? route tail? url_to_check]] [                 
                     any [
                         if (equal? first route first url_to_check) [
                             true
@@ -122,8 +118,14 @@ get-route-controller: func [
                         if (equal? first route #"{") [
                             probe "{ found, matching with }"
                             parameters_match: consume-parameter route url_to_check
-                            either parameters_match [
-                            
+                            chars_after_end_of_parameter_in_route: parameters_match/1
+                            chars_after_end_of_parameter_in_url: parameters_match/2
+                            parameter_match_in_url: parameters_match/3
+                            either (parameter_match_in_url != none) [
+                                probe "matched with }"
+                                append parameters parameter_match_in_url                                
+                                route: chars_after_end_of_parameter_in_route
+                                url_to_check: chars_after_end_of_parameter_in_url
                             ] [
                                 break
                             ]
@@ -133,7 +135,7 @@ get-route-controller: func [
                     
                     either (all [tail? next route tail? next url_to_check]) [
                         route_controller: select routes_for_method head route
-                        return route_controller
+                        return reduce [route_controller parameters]
                     ] [
                         route: next route
                         url_to_check: next url_to_check
@@ -158,9 +160,18 @@ consume-parameter: func [
         ;   return string to between "}"
         ;if no match,
         ;   return false
-        probe route
-        probe url_to_check
-        return true
+        chars_after_end_of_parameter_in_route: next find route "}"
+        if (chars_after_end_of_parameter_in_route = none) [
+            return false
+        ]
+        
+        chars_after_end_of_parameter_in_url: find url_to_check chars_after_end_of_parameter_in_route
+        if (chars_after_end_of_parameter_in_url = none) [
+            return false
+        ]
+        
+        parse url_to_check [copy parameter_match_in_url to chars_after_end_of_parameter_in_url]
+        return reduce [chars_after_end_of_parameter_in_route chars_after_end_of_parameter_in_url parameter_match_in_url]
     ]
 
 ; routes charset is aAzZ-_/, parameters are delimited by { and }, the string inbetween is passed to controller as a variable

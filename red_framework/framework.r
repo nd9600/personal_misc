@@ -43,7 +43,7 @@ buffer: make string! 1024  ; will auto-expand if needed
 do %routing/routing.r
 routes: get-routes
 
-probe find-route routes "GET" "/route_test/123/h"
+probe find-route routes "GET" "/route_test/123/h/456"
 halt
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
@@ -71,11 +71,14 @@ forever [
                     ]
                  ]
                  
-    route: find-route routes method file
+    route_results: find-route routes method file
+    route: route_results/1
+    route_parameters: route_results/2
 
     print append copy "method is: " method 
     print append copy "file is: " file
-    print append copy "route is: " route    
+    print append copy "route is: " route  
+    print append copy "route_parameters are: " route_parameters
 
     ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
     parse file [thru "."

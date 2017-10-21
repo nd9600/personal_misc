@@ -152,7 +152,9 @@ randomize: func [
     "Reseed the random number generator."
     /with seed "date, time, and integer values are used directly; others are converted."
 ][
-    random/seed either find [date! time! integer!] type?/word seed [seed] [
+    random/seed either find [date! time! integer!] type?/word seed [
+        seed
+    ] [
         to-integer checksum form any [seed now/precise] 'sha1
     ]
 ]
