@@ -107,9 +107,13 @@ get-route-controller: func [
         foreach route routes_for_method [
             parameters: copy []
         
-            if equal? route "/route_test/{parameter}/h" [
+            if equal? route "/route_test/{parameter}/h/{parameter}" [
+        
                 probe route
                 while [not any [tail? route tail? url_to_check]] [                 
+                    probe ""
+                    probe route
+                    probe url_to_check
                     any [
                         if (equal? first route first url_to_check) [
                             true
@@ -117,17 +121,28 @@ get-route-controller: func [
 
                         if (equal? first route #"{") [
                             probe "{ found, matching with }"
-                            parameters_match: consume-parameter route url_to_check
-                            chars_after_end_of_parameter_in_route: parameters_match/1
-                            chars_after_end_of_parameter_in_url: parameters_match/2
-                            parameter_match_in_url: parameters_match/3
-                            either (parameter_match_in_url != none) [
-                                probe "matched with }"
-                                append parameters parameter_match_in_url                                
-                                route: chars_after_end_of_parameter_in_route
-                                url_to_check: chars_after_end_of_parameter_in_url
+                            
+                            parameter_is_last_thing_in_route: tail? next find route "}"
+                            either parameter_is_last_thing_in_route [
+                                append parameters url_to_check
+                                route: next find route "}"
+                                url_to_check: tail url_to_check
                             ] [
-                                break
+                                parameters_match: consume-parameter route url_to_check
+                                probe parameters_match
+                                either (parameter_match_in_url != false) [
+                                    probe "matched with }"
+                                    
+                                    chars_after_end_of_parameter_in_route: parameters_match/1
+                                    chars_after_end_of_parameter_in_url: parameters_match/2
+                                    parameter_match_in_url: parameters_match/3
+                                    
+                                    append parameters parameter_match_in_url                                
+                                    route: chars_after_end_of_parameter_in_route
+                                    url_to_check: chars_after_end_of_parameter_in_url
+                                ] [
+                                    break
+                                ]
                             ]
                         ]
                         break
@@ -160,17 +175,28 @@ consume-parameter: func [
         ;   return string to between "}"
         ;if no match,
         ;   return false
+        
+        ;find the first character after } in the route, and all characters after
+        ;   return false if there is none
+        ;find the characters beginning at that single character in the url_to_check
+        ;   return false if there are none
+        ;parameter match will be all characters up to that point
+        ;return the characters after the parameter in the route and url. and the parameter
         chars_after_end_of_parameter_in_route: next find route "}"
+        char_after_end_of_parameter_in_route: first chars_after_end_of_parameter_in_route
+        
         if (chars_after_end_of_parameter_in_route = none) [
             return false
         ]
         
-        chars_after_end_of_parameter_in_url: find url_to_check chars_after_end_of_parameter_in_route
+        chars_after_end_of_parameter_in_url: find url_to_check char_after_end_of_parameter_in_route
+                
         if (chars_after_end_of_parameter_in_url = none) [
             return false
         ]
         
         parse url_to_check [copy parameter_match_in_url to chars_after_end_of_parameter_in_url]
+                
         return reduce [chars_after_end_of_parameter_in_route chars_after_end_of_parameter_in_url parameter_match_in_url]
     ]
 

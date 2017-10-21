@@ -4,6 +4,6 @@ Rebol [
 ]
 
 routes: [
-    ["/route_test/{parameter}/h/{parameter}/g" "p1.html"]
+    ["/route_test/{parameter}/h/{parameter}" "p1.html"]
     ["/route_test_2/{}" "p2.html"]
 ]
