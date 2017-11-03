@@ -4,6 +4,6 @@ Rebol [
 ]
 
 routes: [
-    ["/route_test" "test1.html"]
+    ["/route_test" "FirstController@index"]
     ["/route_test_2" "test2.html"]
 ]

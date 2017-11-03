@@ -1,0 +1,5 @@
+func index [
+    
+] [
+    return "hello"
+]

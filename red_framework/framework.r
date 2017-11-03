@@ -69,6 +69,9 @@ forever [
                     ]
                  ]
                  
+    probe routes
+    probe method
+    probe file
     route_results: find-route routes method file
     either (not none? route_results) [
         route: route_results/1
