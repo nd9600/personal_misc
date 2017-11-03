@@ -65,6 +65,9 @@ find-route: func [
     
     if (not route_controller_results) [
         routes_for_method: select routes route_method
+        probe append copy "routes: " routes
+        probe append copy "route_method: " route_method
+        probe append copy "routes_for_method: " routes_for_method
         route_controller_results: get-route-controller routes_for_method route_url
     ]
     return route_controller_results
@@ -101,68 +104,66 @@ get-route-controller: func [
     ;     reset position of url_to_check
     ; return none
     
-    probe url_to_check
-    probe routes_for_method
+    print ""
+    print append copy "url_to_check: " url_to_check
+    probe append copy "routes_for_method: " routes_for_method
     if (not route_controller) [    
         foreach route routes_for_method [
             parameters: copy []
-        
-            if equal? route "/route_test/{parameter}/h/{parameter}" [
-        
+                
+            print append copy "route: " route
+            while [not any [tail? route tail? url_to_check]] [                 
+                probe ""
                 probe route
-                while [not any [tail? route tail? url_to_check]] [                 
-                    probe ""
-                    probe route
-                    probe url_to_check
-                    any [
-                        if (equal? first route first url_to_check) [
-                            true
-                        ]
+                probe url_to_check
+                any [
+                    if (equal? first route first url_to_check) [
+                        probe append copy "matched " first route
+                        true
+                    ]
 
-                        if (equal? first route #"{") [
-                            probe "{ found, matching with }"
-                            
-                            parameter_is_last_thing_in_route: tail? next find route "}"
-                            either parameter_is_last_thing_in_route [
-                                append parameters url_to_check
-                                route: next find route "}"
-                                url_to_check: tail url_to_check
+                    if (equal? first route #"{") [
+                        probe "{ found, matching with }"
+                        
+                        parameter_is_last_thing_in_route: tail? next find route "}"
+                        either parameter_is_last_thing_in_route [
+                            append parameters url_to_check
+                            route: next find route "}"
+                            url_to_check: tail url_to_check
+                        ] [
+                            parameters_match: consume-parameter route url_to_check
+                            probe parameters_match
+                            either (parameter_match_in_url != false) [
+                                probe "matched with }"
+                                chars_after_end_of_parameter_in_route: parameters_match/1
+                                chars_after_end_of_parameter_in_url: parameters_match/2
+                                parameter_match_in_url: parameters_match/3
+                                
+                                append parameters parameter_match_in_url                                
+                                route: chars_after_end_of_parameter_in_route
+                                url_to_check: chars_after_end_of_parameter_in_url
                             ] [
-                                parameters_match: consume-parameter route url_to_check
-                                probe parameters_match
-                                either (parameter_match_in_url != false) [
-                                    probe "matched with }"
-                                    
-                                    chars_after_end_of_parameter_in_route: parameters_match/1
-                                    chars_after_end_of_parameter_in_url: parameters_match/2
-                                    parameter_match_in_url: parameters_match/3
-                                    
-                                    append parameters parameter_match_in_url                                
-                                    route: chars_after_end_of_parameter_in_route
-                                    url_to_check: chars_after_end_of_parameter_in_url
-                                ] [
-                                    break
-                                ]
+                                break
                             ]
                         ]
-                        break
                     ]
-                    
-                    either (all [tail? next route tail? next url_to_check]) [
-                        route_controller: select routes_for_method head route
-                        return reduce [route_controller parameters]
-                    ] [
-                        route: next route
-                        url_to_check: next url_to_check
-                    ]
+                    break
                 ]
-                url_to_check: head url_to_check
-                probe "end"
-                print ""
+                
+                either (all [tail? next route tail? next url_to_check]) [
+                    route_controller: select routes_for_method head route
+                    return reduce [route_controller parameters]
+                ] [
+                    route: next route
+                    url_to_check: next url_to_check
+                ]
             ]
+            url_to_check: head url_to_check
+            probe "end"
+            ;print ""
         ]
     ]
-    return route_controller
+    return none
 ]
 
 consume-parameter: func [
@@ -191,7 +192,7 @@ consume-parameter: func [
         
         chars_after_end_of_parameter_in_url: find url_to_check char_after_end_of_parameter_in_route
                 
-        if (chars_after_end_of_parameter_in_url = none) [
+        if (none? chars_after_end_of_parameter_in_url) [
             return false
         ]
         

@@ -9,6 +9,7 @@ do %functional.r
 root-dir: what-dir
 
 web-dir: %.   ; the path to where you store your web files
+controllers-dir: %controllers/
 
 port: 8000
 
@@ -43,9 +44,6 @@ buffer: make string! 1024  ; will auto-expand if needed
 do %routing/routing.r
 routes: get-routes
 
-probe find-route routes "GET" "/route_test/123/h/456"
-halt
-
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
     http-port: first wait listen-port
@@ -72,31 +70,38 @@ forever [
                  ]
                  
     route_results: find-route routes method file
-    route: route_results/1
-    route_parameters: route_results/2
+    either (not none? route_results) [
+        route: route_results/1
+        route_parameters: route_results/2
 
-    print append copy "method is: " method 
-    print append copy "file is: " file
-    print append copy "route is: " route  
-    print append copy "route_parameters are: " route_parameters
+        print append copy "method is: " method 
+        print append copy "file is: " file
+        print append copy "route_results are: " route_results  
+        print append copy "route is: " route  
+        print append copy "route_parameters are: " route_parameters
+        
+        halt
 
-    ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
-    parse file [thru "."
-                    [
-                        "html" (mime: "text/html")
-                        | "gif"  (mime: "image/gif")
-                        | "jpg"  (mime: "image/jpeg")
-                    ]
-               ]
+        ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
+        parse file [thru "."
+                        [
+                            "html" (mime: "text/html")
+                            | "gif"  (mime: "image/gif")
+                            | "jpg"  (mime: "image/jpeg")
+                        ]
+                   ]
 
-    ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
-    any [
-        if not exists? web-dir/:file [send-error 404 file]
-        if error? try [data: read/binary web-dir/:file] [send-error 400 file]
-        send-page data mime
+        ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
+        any [
+            if not exists? web-dir/:file [send-error 404 file]
+            if error? try [data: read/binary web-dir/:file] [send-error 400 file]
+            send-page data mime
+        ]
+
+        ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
+        close http-port
+        halt
+    ] [
+        probe append copy "route not matched: " file
     ]
-
-    ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
-    close http-port
-    halt
 ]

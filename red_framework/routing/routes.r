@@ -4,6 +4,6 @@ Rebol [
 ]
 
 routes: [
-    ["/route_test" "test.html"]
+    ["/route_test" "test1.html"]
     ["/route_test_2" "test2.html"]
 ]
