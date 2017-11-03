@@ -59,29 +59,33 @@ forever [
 
     ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
     parse buffer [
-                    [
-                        copy method route_methods
-                    ]
-                    [
-                        "http"
-                        | "/ "
-                        | copy file to " "
-                    ]
-                 ]
+        [
+            copy method route_methods
+        ]
+        [
+            "http"
+            | "/ "
+            | copy file to " "
+        ]
+    ]
                  
-    probe routes
-    probe method
-    probe file
     route_results: find-route routes method file
     either (not none? route_results) [
-        route: route_results/1
+        route: parse route_results/1 "@"
         route_parameters: route_results/2
+        controller_name: copy append route/1 ".r"
+        controller_function_name: copy route/2
 
         print append copy "method is: " method 
         print append copy "file is: " file
         print append copy "route_results are: " route_results  
         print append copy "route is: " route  
         print append copy "route_parameters are: " route_parameters
+
+        controller_path: append controllers-dir controller_name
+        do read controller_path
+        controller_output: do to-word controller_function_name
+        probe controller_output
         
         halt
 
