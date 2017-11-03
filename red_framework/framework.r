@@ -46,8 +46,11 @@ routes: get-routes
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen-port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
+    print ""
+    print "waiting for request"
     http-port: first wait listen-port
     clear buffer
+    print "waiting over"
 
     ; gathers the browser's request, a line at a time. The host name of the client (the browser computer) is added to the buffer string. It is just for your own information. If you want, you could use the remote-ip address instead of the host name.
     while [not empty? request: first http-port][
@@ -71,23 +74,21 @@ forever [
                  
     route_results: find-route routes method file
     either (not none? route_results) [
+        print append copy "route_results are: " mold route_results  
         route: parse route_results/1 "@"
         route_parameters: route_results/2
-        controller_name: copy append route/1 ".r"
+        controller_name: append copy route/1 ".r"
         controller_function_name: copy route/2
 
         print append copy "method is: " method 
         print append copy "file is: " file
-        print append copy "route_results are: " route_results  
-        print append copy "route is: " route  
-        print append copy "route_parameters are: " route_parameters
+        print append copy "route is: " mold route  
+        print append copy "route_parameters are: " mold route_parameters
 
-        controller_path: append controllers-dir controller_name
+        controller_path: append copy controllers-dir controller_name
         do read controller_path
         controller_output: do to-word controller_function_name
         probe controller_output
-        
-        halt
 
         ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
         parse file [thru "."
@@ -100,14 +101,21 @@ forever [
 
         ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
         any [
-            if not exists? web-dir/:file [send-error 404 file]
-            if error? try [data: read/binary web-dir/:file] [send-error 400 file]
+            ;if not exists? web-dir/:file [
+            ;    send-error 404 file
+            ;]
+            if error? try [
+                ;data: read/binary web-dir/:file
+                data: copy controller_output
+            ] [
+                send-error 400 file
+            ]
             send-page data mime
         ]
 
         ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
         close http-port
-        halt
+        print "port closed"
     ] [
         probe append copy "route not matched: " file
     ]

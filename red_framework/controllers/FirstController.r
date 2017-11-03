@@ -1,5 +1,9 @@
-func index [
+Rebol [
+    Title: "Tiny Framework: First controller"
+]
+
+index: func [
     
 ] [
-    return "hello"
+    return "hello world"
 ]

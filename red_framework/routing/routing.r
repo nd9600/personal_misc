@@ -65,10 +65,10 @@ find-route: func [
     
     if (not route_controller_results) [
         routes_for_method: select routes route_method
-        print ""
-        probe routes
-        probe route_method
-        probe routes_for_method
+        ;print ""
+        ;probe routes
+        ;probe route_method
+        ;probe routes_for_method
         route_controller_results: get-route-controller routes_for_method route_url
     ]
     return route_controller_results
@@ -105,9 +105,9 @@ get-route-controller: func [
     ;     reset position of url_to_check
     ; return none
     
-    print ""
-    print url_to_check
-    probe routes_for_method
+    ;print ""
+    ;print url_to_check
+    ;probe routes_for_method
 
     if route_controller [
         return reduce [route_controller []]
@@ -115,19 +115,19 @@ get-route-controller: func [
     foreach route routes_for_method [
         parameters: copy []
             
-        print append copy "route: " route
+        ;print append copy "route: " route
         while [not any [tail? route tail? url_to_check]] [                 
-            probe ""
-            probe route
-            probe url_to_check
+            ;probe ""
+            ;probe route
+            ;probe url_to_check
             any [
                 if (equal? first route first url_to_check) [
-                    probe append copy "matched " first route
+                    ;probe append copy "matched " first route
                     true
                 ]
 
                 if (equal? first route #"{") [
-                    probe "{ found, matching with }"
+                    ;probe "{ found, matching with }"
                     
                     parameter_is_last_thing_in_route: tail? next find route "}"
                     either parameter_is_last_thing_in_route [
@@ -136,9 +136,9 @@ get-route-controller: func [
                         url_to_check: tail url_to_check
                     ] [
                         parameters_match: consume-parameter route url_to_check
-                        probe parameters_match
+                        ;probe parameters_match
                         either (parameter_match_in_url != false) [
-                            probe "matched with }"
+                            ;probe "matched with }"
                             chars_after_end_of_parameter_in_route: parameters_match/1
                             chars_after_end_of_parameter_in_url: parameters_match/2
                             parameter_match_in_url: parameters_match/3
@@ -163,9 +163,9 @@ get-route-controller: func [
             ]
         ]
         url_to_check: head url_to_check
-        probe "end"
-        ;print ""
+        ;probe "end"
     ]
+    return none
 ]
 
 consume-parameter: func [
