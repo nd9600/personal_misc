@@ -26,9 +26,9 @@ send-error: function [err-num file] [err] [
     err: find errors err-num
     insert http-port join "HTTP/1.0 " [
         err-num " " err/2 "^/Content-type: text/html^/^/"
-        <HTML> <TITLE> err/2 </TITLE>
-        "<BODY><H1>SERVER-ERROR</H1><P>REBOL Webserver Error:"
-        err/3 " " file newline <P> </BODY> </HTML>
+        <html> <title> err/2 </title>
+        <body><h1> "server-error" </h1><br /><p> "REBOL Webserver Error:" </p>
+        <br /> <p> err/3 "  " <b>file</b> newline </p> </body> </html>
     ]
 ]
 
@@ -114,9 +114,9 @@ forever [
         ]
 
         ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
-        close http-port
         print "port closed"
     ] [
-        probe append copy "route not matched: " file
+        send-error 404 file
     ]
+    close http-port
 ]

@@ -173,35 +173,32 @@ consume-parameter: func [
     route [string!] "the defined route with the parameter"
     url_to_check [string!] "the URL with the parameter"
     /local parsing_rule
-    ] [
-        ;if match,
-        ;   return string to between "}"
-        ;if no match,
-        ;   return false
-        
-        ;find the first character after } in the route, and all characters after
-        ;   return false if there is none
-        ;find the characters beginning at that single character in the url_to_check
-        ;   return false if there are none
-        ;parameter match will be all characters up to that point
-        ;return the characters after the parameter in the route and url. and the parameter
-        chars_after_end_of_parameter_in_route: next find route "}"
-        char_after_end_of_parameter_in_route: first chars_after_end_of_parameter_in_route
-        
-        if (chars_after_end_of_parameter_in_route = none) [
-            return false
-        ]
-        
-        chars_after_end_of_parameter_in_url: find url_to_check char_after_end_of_parameter_in_route
-                
-        if (none? chars_after_end_of_parameter_in_url) [
-            return false
-        ]
-        
-        parse url_to_check [copy parameter_match_in_url to chars_after_end_of_parameter_in_url]
-                
-        return reduce [chars_after_end_of_parameter_in_route chars_after_end_of_parameter_in_url parameter_match_in_url]
+] [
+    ;if match,
+    ;   return string to between "}"
+    ;if no match,
+    ;   return false
+    
+    ;find the first character after } in the route, and all characters after
+    ;   return false if there is none
+    ;find the characters beginning at that single character in the url_to_check
+    ;   return false if there are none
+    ;parameter match will be all characters up to that point
+    ;return the characters after the parameter in the route and url. and the parameter
+    chars_after_end_of_parameter_in_route: next find route "}"
+    char_after_end_of_parameter_in_route: first chars_after_end_of_parameter_in_route
+    
+    if (chars_after_end_of_parameter_in_route = none) [
+        return false
     ]
-
-; routes charset is aAzZ-_/, parameters are delimited by { and }, the string inbetween is passed to controller as a variable
-; parameters are any string
+    
+    chars_after_end_of_parameter_in_url: find url_to_check char_after_end_of_parameter_in_route
+            
+    if (none? chars_after_end_of_parameter_in_url) [
+        return false
+    ]
+    
+    parse url_to_check [copy parameter_match_in_url to chars_after_end_of_parameter_in_url]
+            
+    return reduce [chars_after_end_of_parameter_in_route chars_after_end_of_parameter_in_url parameter_match_in_url]
+]
