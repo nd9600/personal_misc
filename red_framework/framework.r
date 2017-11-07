@@ -23,7 +23,7 @@ routing/get_routes
 
 errors: [
     400 "Forbidden" "No permission to access: "
-    404 "Not Found" "File was not found: "
+    404 "Not Found" "Controller not found for: "
     500 "Internal server error" "Error: "
 ]
 

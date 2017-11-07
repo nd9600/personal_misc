@@ -11,6 +11,8 @@ routing: make object! [
     route_methods_rule: copy ["GET" | "POST" | "HEAD" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH"]
     
     routes: copy []
+    
+    route_files: [%routes.r]
 
     get_routes: func [
         "gets the app's routes"
@@ -26,7 +28,6 @@ routing: make object! [
         routes: head temp_routes
 
         ; loads the data for each routing file
-        route_files: [%routes.r %routes2.r]
         f_reduce :load route_files
 
         ; loops through every routing file
@@ -38,13 +39,13 @@ routing: make object! [
 
                     ; if the route_method is ANY, GET or POST, add it to the appropriate series
                     ; otherwise, add it to the GET series
-                    route_method: first actual_route
-                    either (find accepted_route_methods route_method) [
-                        route_url_and_controller: next actual_route
-                        append select routes route_method route_url_and_controller
-                    ] [
-                        append select routes "GET" actual_route
+                    route_method: select actual_route 'method
+                    if (not find accepted_route_methods route_method) [
+                        route_method: "GET"
                     ]
+                    route_url: select actual_route 'url
+                    route_controller: select actual_route 'controller
+                    append select routes route_method reduce [route_url route_controller]
                 ]
             ]
         ]
@@ -120,6 +121,10 @@ routing: make object! [
         ]
         foreach route routes_for_method [
             parameters: copy []
+            
+            print ""
+            probe route
+            probe url_to_check
                 
             ;print append copy "route: " route
             while [not any [tail? route tail? url_to_check]] [                 
