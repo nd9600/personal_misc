@@ -45,7 +45,9 @@ routing: make object! [
                     ]
                     route_url: select actual_route 'url
                     route_controller: select actual_route 'controller
-                    append select routes route_method reduce [route_url route_controller]
+                    
+                    routes_for_method: select routes route_method
+                    append routes_for_method reduce [route_url route_controller]
                 ]
             ]
         ]
@@ -86,12 +88,10 @@ routing: make object! [
         routes_for_method [series!] "the routes to check against"
         url_to_check [string!] "the URL to check"
         /local route_controller
-    ] [
+    ] [   
         ; tries to find a route in the ones without parameters first
         route_controller: select routes_for_method url_to_check
-        
-        ; maybe remove a route if it doesn't have a parameter in it
-        
+                
         ; if that fails, loop through all other routes - 
         ;     iterate over the route URL until the tail of it or url_to_check
         ;         if route_url[i] == url_to_check[i],
@@ -121,10 +121,6 @@ routing: make object! [
         ]
         foreach route routes_for_method [
             parameters: copy []
-            
-            print ""
-            probe route
-            probe url_to_check
                 
             ;print append copy "route: " route
             while [not any [tail? route tail? url_to_check]] [                 

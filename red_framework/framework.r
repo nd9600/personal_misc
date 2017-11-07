@@ -12,7 +12,7 @@ do %routing/routing.r
 root_dir: what-dir
 
 web_dir: %.   ; the path to where you store your web files
-controllers-dir: %controllers/
+controllers_dir: %controllers/
 
 port: 8000
 
@@ -61,8 +61,6 @@ forever [
     file: "index.html"
     mime: "text/plain"
     
-    probe routing/accepted_route_methods
-
     ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
     parse buffer [
         [
@@ -80,6 +78,7 @@ forever [
         print append copy "route_results are: " mold route_results  
         route: parse route_results/1 "@"
         
+        ; return an error if the controller is invalid
         either (equal? length? route 1) [
             print rejoin ["^"" route "^"" " is an incorrect controller"]
             send-error 500 rejoin ["^"" route "^"" " is an incorrect controller"]
@@ -94,7 +93,8 @@ forever [
             print append copy "route is: " mold route  
             print append copy "route_parameters are: " mold route_parameters
 
-            controller_path: append copy controllers-dir controller_name
+            ; execute the wanted function from the controller file
+            controller_path: append copy controllers_dir controller_name
             do read controller_path
             controller_output: do to-word controller_function_name
             probe controller_output

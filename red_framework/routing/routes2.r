@@ -4,6 +4,13 @@ Rebol [
 ]
 
 routes: [
-    ["/route_test/{parameter}/h/{parameter}" "p1.html"]
-    ["/route_test_2/{}" "p2.html"]
+    [
+        url "/route_test/{parameter}"
+        method "GET"
+        controller "FirstController@param_function1"
+    ]
+    [
+        url "/route_test/{parameter}/h/{parameter}"
+        controller "FirstController@param_function2"
+    ]
 ]
