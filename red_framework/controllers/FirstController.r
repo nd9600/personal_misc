@@ -2,8 +2,15 @@ Rebol [
     Title: "Tiny Framework: First controller"
 ]
 
-index: func [
-    
+index: does ["hello world"]
+
+param_test: func [
+    parameters [block!]
 ] [
-    return "hello world"
+    template: templater/t_load "first.twig.html"
+    variables: make map! reduce [
+        'parameter parameters/1
+    ]
+    
+    return templater/compile template variables
 ]

@@ -1,12 +1,16 @@
 Rebol []
 
 templater: make object! [
+    t_load: func [
+        template_name ["string!"] "the template.path"
+    ] [
+        read append copy %views/ template_name
+    ]
+
     compile: func [
         input_string    [string!]   "the input to compile"
         variables       [hash!]    "the variables to use to compile the input string"
-    ] [
-        output: copy ""
-        
+    ] [        
         whitespace:     [#" " | tab | newline]
         digit:          charset "0123456789"
         letter:         charset [#"A" - #"Z" #"a" - #"z" ]
@@ -20,7 +24,7 @@ templater: make object! [
         ; copy any character into the output
         anything: [copy data any_character (append output data)]
         
-        ; copy escaped left braces i
+        ; copy escaped left braces nto the output
         escaped_left_braces: [copy data "\{{" (append output data)]
         
         ; copy the value of a variable into the output, or "none" if the variable doesn't exist
@@ -33,15 +37,22 @@ templater: make object! [
             )
         ]
         
+        ;'comment is already defined in rebol
+        comment_rule: [ "{#" thru "#}" ]
+        
         rules: [
             any [
                     escaped_left_braces
                 |
                     template_variable
                 |
+                    comment_rule
+                |
                     anything
             ]  
         ]
+        
+        output: copy ""
         parse/all input_string rules
         output
     ]

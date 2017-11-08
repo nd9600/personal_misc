@@ -12,14 +12,12 @@ do %routing/routing.r
 ;brings in the templating functions into an object called 'templater
 do %views/templater.r
 
+;brings in the config into an object called 'config
+do %config.r
+
 root_dir: what-dir
 
-web_dir: %.   ; the path to where you store your web files
-controllers_dir: %controllers/
-
-port: 8000
-
-listen_port: open/lines append tcp://: port  ; port used for web connections
+listen_port: open/lines append tcp://: config/port  ; port used for web connections
 
 ; set up the routes
 routing/get_routes
@@ -97,19 +95,24 @@ forever [
             print append copy "route_parameters are: " mold route_parameters
 
             ; execute the wanted function from the controller file
-            controller_path: append copy controllers_dir controller_name
-            do read controller_path
-            controller_output: do to-word controller_function_name
-            probe controller_output
+            controller_path: append copy config/controllers_dir controller_name
+            controller: context load controller_path   
+
+            either (empty? route_parameters) [
+                controller_output: controller/(to-word controller_function_name)
+            ] [
+                controller_output: controller/(to-word controller_function_name) route_parameters
+            ]
 
             ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
-            parse file [thru "."
-                            [
-                                "html" (mime: "text/html")
-                                | "gif"  (mime: "image/gif")
-                                | "jpg"  (mime: "image/jpeg")
-                            ]
-                       ]
+            ;parse file [thru "."
+            ;                [
+            ;                    "html" (mime: "text/html")
+            ;                    | "gif"  (mime: "image/gif")
+            ;                    | "jpg"  (mime: "image/jpeg")
+            ;                ]
+            ;           ]
+            mime: "text/html"
 
             ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
             any [

@@ -10,7 +10,7 @@ routes: [
         controller "FirstController@index"
     ]
     [
-        url "/route_test_2" 
-        controller "FirstController@index"
+        url "/route_test/{parameter}" 
+        controller "FirstController@param_test"
     ]
 ]
