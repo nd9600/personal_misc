@@ -9,6 +9,9 @@ do %functional.r
 ;brings in the routing functions into an object called 'routing
 do %routing/routing.r
 
+;brings in the templating functions into an object called 'templater
+do %views/templater.r
+
 root_dir: what-dir
 
 web_dir: %.   ; the path to where you store your web files
