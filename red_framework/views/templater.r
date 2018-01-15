@@ -1,4 +1,6 @@
-Rebol []
+Rebol [
+    Title: "Tiny Framework - templater"
+]
 
 templater: make object! [
     t_load: func [

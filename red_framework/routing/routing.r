@@ -1,5 +1,5 @@
 Rebol [
-    Title: "Tiny Framework: routing"
+    Title: "Tiny Framework - routing"
 ]
 
 routing: make object! [
