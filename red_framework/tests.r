@@ -3,7 +3,7 @@ Rebol [
     Documentation: http://www.rebol.net/cookbook/recipes/0057.html
 ]
 
-;runs all functions in %file that start with test
+;runs all functions that start with test in %file
 ;functions: copy words-of %file
 ;test_functions: f_filter lambda [
 ;    test_match: find to-string ? "test" 
@@ -19,11 +19,13 @@ routes: [
         controller "FirstController@index"
     ]
     [
-        url "/route_test/{parameter}" 
+        url "/route_test/{parameter}"
+        method "GET"
         controller "FirstController@param_test"
     ]
     [
         url "/route_test/{p1}/{p2}" 
+        method "POST"
         controller "FirstController@param_test2"
     ]
 ]
@@ -48,7 +50,7 @@ assert [
 ]
 
 ; checks route with two parameters
-req3: make request_obj [method: "GET" url: "/route_test/123/456"]
+req3: make request_obj [method: "POST" url: "/route_test/123/456"]
 req3_results: routing/find_route req3
 assert [
     req3_results/1 == "FirstController@param_test2"
