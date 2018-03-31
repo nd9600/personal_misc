@@ -2,11 +2,6 @@ Rebol [
     Title: "Tiny Framework - routing"
 ]
 
-request_obj: context [
-    method: copy ""
-    url: copy ""
-]
-
 routing: make object! [
 
     ; used to check if the HTTP request uses an acceptable method

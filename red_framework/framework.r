@@ -6,7 +6,8 @@ Rebol [
 ;brings in the base FP functions
 do %functional.r
 
-;brings in helper functions
+do %data_structures.r
+
 do %helpers.r
 
 ;brings in the config into an object called 'config
@@ -120,9 +121,9 @@ forever [
             controller: context load controller_path   
 
             either (empty? route_parameters) [
-                controller_output: controller/(to-word controller_function_name)
+                controller_output: controller/(to-word controller_function_name) request
             ] [
-                controller_output: controller/(to-word controller_function_name) route_parameters
+                controller_output: controller/(to-word controller_function_name) request route_parameters
             ]
 
             ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
