@@ -15,6 +15,9 @@ do %routing/routing.r
 ;brings in the templating functions into an object called 'templater
 do %views/templater.r
 
+;stops the framework if a test fails
+do %tests.r
+
 root_dir: what-dir
 
 listen_port: open/lines append tcp://: config/port  ; port used for web connections
@@ -22,7 +25,9 @@ listen_port: open/lines append tcp://: config/port  ; port used for web connecti
 print rejoin ["^/listening on port " config/port]
 
 ; set up the routes
-routing/get_routes
+routing/get_routes config/route_files
+
+routing/print_routes
 
 errors: [
     400 "Forbidden" "No permission to access: "
@@ -50,21 +55,21 @@ buffer: make string! 1024  ; will auto-expand if needed
 
 ; processes each HTTP request from a web browser. The first step is to wait for a connection on the listen_port. When a connection is made, the http-port variable is set to the TCP port connection and is then used to get the HTTP request from the browser and send the result back to the browser.
 forever [
-    print ""
+    print rejoin [newline]
     print "waiting for request"
     http-port: first wait listen_port
     clear buffer
     print "waiting over"
 
     ; gathers the browser's request, a line at a time. The host name of the client (the browser computer) is added to the buffer string. It is just for your own information. If you want, you could use the remote-ip address instead of the host name.
-    while [not empty? request: first http-port][
-        repend buffer [request newline]
+    while [not empty? http_request: first http-port][
+        repend buffer [http_request newline]
     ]
     repend buffer ["Address: " http-port/host newline]
-    file: "index.html"
+    relative_path: "index.html"
     mime: "text/plain"
     
-    ;  parses the HTTP header and copies the requested file name to a variable. This is a very simple method, but it will work fine for simple web server requests.
+    ;  parses the HTTP header and copies the requested relative_path to a variable. This is a very simple method, but it will work fine for simple web server requests.
     parse buffer [
         [
             copy method routing/route_methods_rule
@@ -72,11 +77,22 @@ forever [
         [
             "http"
             | "/ "
-            | copy file to " "
+            | copy relative_path to "?"
+              copy query_parameters to " "
+            | copy relative_path to " "
         ]
     ]
+
+    request: make request_obj compose [
+        method: (method)
+        url: (relative_path)
+        query_parameters: (query_parameters)
+    ]
+
+    print "request is"
+    probe request
                  
-    route_results: routing/find_route method file
+    route_results: routing/find_route request
     either (not none? route_results) [
         print append copy "route_results are: " mold route_results  
         route: parse route_results/1 "@"
@@ -91,8 +107,6 @@ forever [
             controller_name: append copy route/1 ".r"
             controller_function_name: copy route/2
 
-            print append copy "method is: " method 
-            print append copy "file is: " file
             print append copy "route is: " mold route  
             print append copy "route_parameters are: " mold route_parameters
 
@@ -125,7 +139,7 @@ forever [
                     ;data: read/binary web_dir/:file
                     data: copy controller_output
                 ] [
-                    send-error 400 file
+                    send-error 400 relative_path
                 ]
                 send-page data mime
             ]
@@ -134,7 +148,7 @@ forever [
             print "port closed"
         ]
     ] [
-        send-error 404 file
+        send-error 404 relative_path
     ]
     close http-port
 ]
