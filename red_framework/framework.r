@@ -119,17 +119,18 @@ forever [
             print append copy "route_parameters are: " mold route_parameters
 
             ; execute the wanted function from the controller file
-            controller_path: append copy config/controllers_dir controller_name
+            controller_path: config/controllers_dir/:controller_name
             controller: context load controller_path   
 
+            ; gets the result from calling the controller function
             either (empty? route_parameters) [
                 controller_output: controller/(to-word controller_function_name) request
             ] [
                 controller_output: controller/(to-word controller_function_name) request route_parameters
             ]
 
-            ; takes the file's suffix and uses it to lookup the MIME type for the file. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
-            ;parse file [thru "."
+            ; takes the relative_path's suffix and uses it to lookup the MIME type. This is returned to the web browser to tell it what to do with the data. For example, if the file is foo.html, then a text/html MIME type is returned. You can add other MIME types to this list.
+            ;parse relative_path [thru "."
             ;                [
             ;                    "html" (mime: "text/html")
             ;                    | "gif"  (mime: "image/gif")
@@ -140,11 +141,11 @@ forever [
 
             ; check that the requested file exists, read the file and send it to the browser using the SEND-PAGE function described earlier. If an error occurs, the SEND-ERROR function is called to send the error back to the browser.
             any [
-                ;if not exists? web_dir/:file [
-                ;    send-error 404 file
+                ;if not exists? config/public_dir/:relative_path [
+                ;    send-error 404 relative_path
                 ;]
                 if error? try [
-                    ;data: read/binary web_dir/:file
+                    ;data: read/binary config/public_dir/:relative_path
                     data: copy controller_output
                 ] [
                     send-error 400 relative_path
