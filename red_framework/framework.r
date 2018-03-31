@@ -6,18 +6,20 @@ Rebol [
 ;brings in the base FP functions
 do %functional.r
 
+;brings in the config into an object called 'config
+do %config.r
+
 ;brings in the routing functions into an object called 'routing
 do %routing/routing.r
 
 ;brings in the templating functions into an object called 'templater
 do %views/templater.r
 
-;brings in the config into an object called 'config
-do %config.r
-
 root_dir: what-dir
 
 listen_port: open/lines append tcp://: config/port  ; port used for web connections
+
+print rejoin ["^/listening on port " config/port]
 
 ; set up the routes
 routing/get_routes
