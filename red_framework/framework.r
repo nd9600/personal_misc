@@ -6,6 +6,9 @@ Rebol [
 ;brings in the base FP functions
 do %functional.r
 
+;brings in helper functions
+do %helpers.r
+
 ;brings in the config into an object called 'config
 do %config.r
 
@@ -78,15 +81,17 @@ forever [
             "http"
             | "/ "
             | copy relative_path to "?"
-              copy query_parameters to " "
+              skip copy query_string to " "
             | copy relative_path to " "
         ]
     ]
 
-    request: make request_obj compose [
+    parsed_query_parameters: parse_query_string query_string
+
+    request: make request_obj compose/only [
         method: (method)
         url: (relative_path)
-        query_parameters: (query_parameters)
+        query_parameters: (parsed_query_parameters)
     ]
 
     print "request is"
