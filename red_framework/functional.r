@@ -36,14 +36,16 @@ lambda: func [
     func spec block
 ]
 
-f_reduce: func [
-        "The functional reduce"
+f_map: func [
+        "The functional map"
         f  [any-function!] "the function to use" 
         block [block!] "the block to reduce"
     ] [
-    while [not tail? block] [
-        block: change/part block f first block 1
+    result: copy block
+    while [not tail? result] [
+        result: change/part result f first result 1
     ]   
+    head result
 ]
 
 f_fold: func [

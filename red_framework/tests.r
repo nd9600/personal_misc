@@ -3,6 +3,14 @@ Rebol [
     Documentation: http://www.rebol.net/cookbook/recipes/0057.html
 ]
 
+;runs all functions in %file that start with test
+;functions: copy words-of %file
+;test_functions: f_filter lambda [
+;    test_match: find to-string ? "test" 
+;    all [found? test_match head? test_match]
+;] w
+;test_results: f_map lambda [do get in abc to-word ?] test_functions
+
 routes_str1: {
 routes: [
     [
@@ -23,36 +31,28 @@ routes: [
 
 routing/get_routes reduce [routes_str1]
 
-req1: make request_obj [
-    method: "GET" 
-    url: "/route_test"
-]
-
-{req1_results: routing/find_route req1
+; checks route with no parameters
+req1: make request_obj [method: "GET" url: "/route_test"]
+req1_results: routing/find_route req1
 assert [
     req1_results/1 == copy "FirstController@index"
     req1_results/2 == copy []
 ]
 
-req2: make request_obj [
-    method: "GET" 
-    url: "/route_test/123"
-]
-
+; checks route with one parameter
+req2: make request_obj [method: "GET" url: "/route_test/123"]
 req2_results: routing/find_route req2
 assert [
     req2_results/1 == "FirstController@param_test"
     req2_results/2 == ["123"]
-]}
-
-req3: make request_obj [
-    method: "GET" 
-    url: "/route_test/123/456"
 ]
 
+; checks route with two parameters
+req3: make request_obj [method: "GET" url: "/route_test/123/456"]
 req3_results: routing/find_route req3
-probe req3_results
 assert [
     req3_results/1 == "FirstController@param_test2"
     req3_results/2 == ["123" "456"]
 ]
+
+print "all tests pass"

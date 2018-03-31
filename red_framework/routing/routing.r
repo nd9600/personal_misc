@@ -46,7 +46,7 @@ routing: make object! [
         routes: head temp_routes
 
         ; loads the data for each routing file
-        f_reduce :load routes_to_load
+        routes_to_load: f_map :load routes_to_load
 
         ; loops through every routing file
         forall routes_to_load [
@@ -154,13 +154,9 @@ routing: make object! [
             route: first routes_for_method
             parameters: copy []
                 
-            print append copy "^/route: " route
+            ;print append copy "^/route: " route
 
             while [not any [tail? route tail? url_to_check]] [                 
-                probe ""
-                probe route
-                probe url_to_check
-
                 route_doesnt_have_parameter: none? find route "{"
                 guards: reduce [route_doesnt_have_parameter (not-equal? length? route length? url_to_check)]
                 if all guards [
@@ -174,7 +170,7 @@ routing: make object! [
                     ]
 
                     if (equal? first route #"{") [
-                        probe "{ found, matching with }"
+                        ;probe "{ found, matching with }"
                         
                         parameter_is_last_thing_in_route: tail? next find route "}"
                         either parameter_is_last_thing_in_route [
@@ -237,7 +233,6 @@ routing: make object! [
         ;parameter match will be all characters up to that point
         ;return the characters after the parameter in the route and url. and the parameter
         chars_after_end_of_parameter_in_route: next find route "}"
-        probe chars_after_end_of_parameter_in_route
         char_after_end_of_parameter_in_route: first chars_after_end_of_parameter_in_route
         
         if (chars_after_end_of_parameter_in_route = none) [
@@ -251,12 +246,6 @@ routing: make object! [
         ]
         
         parse url_to_check [copy parameter_match_in_url to chars_after_end_of_parameter_in_url]
-
-        probe route
-        probe url_to_check
-        probe chars_after_end_of_parameter_in_route
-        probe chars_after_end_of_parameter_in_url
-        probe parameter_match_in_url
                 
         return reduce [chars_after_end_of_parameter_in_route chars_after_end_of_parameter_in_url parameter_match_in_url]
     ]
