@@ -99,7 +99,9 @@ forever [
     probe request
                  
     route_results: routing/find_route request
-    either (not none? route_results) [
+    either (none? route_results) [
+        send-error 404 relative_path
+    ] [
         print append copy "route_results are: " mold route_results  
         route: parse route_results/1 "@"
         
@@ -153,8 +155,6 @@ forever [
             ; makes sure that the connection from the browser is closed, now that the requested web data has been returned.
             print "port closed"
         ]
-    ] [
-        send-error 404 relative_path
     ]
     close http-port
 ]
