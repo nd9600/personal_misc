@@ -26,6 +26,10 @@ ufcs: function [
                         probe b
                         data_after_match: next find/only data second_arg
 
+                        ;insert head output :f
+                        ;append output args
+                        ;probe rejoin ["output: " mold output]
+
                         append output o
                         append recursive_data o
                         append recursive_data data_after_match
