@@ -8,9 +8,9 @@ Rebol [
 ;apply: function [f args][do compose [f (args)] ]
 
 lambda: func [
-        "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
-        block [block!] "the function to make"
-    ] [
+    "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
+    block [block!] "the function to make"
+] [
     spec: make block! 0
 
     parse block [
@@ -37,10 +37,10 @@ lambda: func [
 ]
 
 f_map: func [
-        "The functional map"
-        f  [any-function!] "the function to use" 
-        block [block!] "the block to reduce"
-    ] [
+    "The functional map"
+    f  [any-function!] "the function to use" 
+    block [block!] "the block to reduce"
+] [
     result: copy block
     while [not tail? result] [
         result: change/part result f first result 1
@@ -48,12 +48,24 @@ f_map: func [
     head result
 ]
 
-f_fold: func [
-        "The functional left fold"
-        f  [any-function!] "the function to use" 
-        init [any-type!] "the initial value"
-        block [block!] "the block to fold"
+f_map2: func [
+    "The functional map"
+    f [any-function!] "the function to use" 
+    block [block!] "the block to reduce"
+] [
+    either tail? b [
+        copy []
     ] [
+        head insert (m :f next b) (f first b)
+    ]
+]
+
+f_fold: func [
+    "The functional left fold"
+    f  [any-function!] "the function to use" 
+    init [any-type!] "the initial value"
+    block [block!] "the block to fold"
+] [
     result: init
     while [not tail? block] [
         result: f result first block
@@ -63,10 +75,10 @@ f_fold: func [
 ]
 
 f_filter: func [
-        "The functional filter"
-        condition [function!] "the condition to check, as a lambda function" 
-        block [block!] "the block to fold"
-    ] [
+    "The functional filter"
+    condition [function!] "the condition to check, as a lambda function" 
+    block [block!] "the block to fold"
+] [
     result: copy []
     while [not tail? block] [
         if (condition first block) [
