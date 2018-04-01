@@ -43,21 +43,10 @@ f_map: func [
 ] [
     result: copy block
     while [not tail? result] [
-        result: change/part result f first result 1
+        replacement: f first result
+        result: change/part result replacement 1
     ]   
     head result
-]
-
-f_map2: func [
-    "The functional map"
-    f [any-function!] "the function to use" 
-    block [block!] "the block to reduce"
-] [
-    either tail? b [
-        copy []
-    ] [
-        head insert (m :f next b) (f first b)
-    ]
 ]
 
 f_fold: func [
