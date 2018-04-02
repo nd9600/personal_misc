@@ -70,6 +70,7 @@ forever [
         repend buffer [http_request newline]
     ]
     repend buffer ["Address: " http-port/host newline]
+    query_string: copy ""
     relative_path: "index.html"
     mime: "text/plain"
     
