@@ -8,7 +8,7 @@ Red [
 ;apply: function [f args][do compose [f (args)] ]
 
 lambda: func [
-    "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
+    "makes lambda functions, doesn't work for nested blocks- https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
     block [block!] "the function to make"
 ] [
     spec: make block! 0
@@ -33,7 +33,7 @@ lambda: func [
         do make error! {cannot match ? with ?name placeholders}
     ]
 
-    func spec block
+    function spec block
 ]
 
 f_map: func [
@@ -66,7 +66,7 @@ f_fold: func [
 
 f_filter: func [
     "The functional filter"
-    condition [function!] "the condition to check, as a lambda function" 
+    condition [any-function!] "the condition to check, as a lambda function" 
     block [block!] "the block to fold"
 ] [
     result: copy []
