@@ -41,12 +41,13 @@ f_map: func [
     f  [any-function!] "the function to use" 
     block [block!] "the block to reduce"
 ] [
-    result: copy block
-    while [not tail? result] [
-        replacement: f first result
-        result: change/only/part result replacement 1
+    result: copy []
+    while [not tail? block] [
+        replacement: f first block
+        append/only result replacement
+        block: next block
     ]   
-    head result
+    result
 ]
 
 f_fold: func [
