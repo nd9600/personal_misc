@@ -11,9 +11,26 @@ lambda: func [
     "makes lambda functions, doesn't work for nested blocks- https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
     block [block!] "the function to make"
 ] [
-    spec: make block! 0
 
-    parse block [
+    flatten: function[b][
+        flattened: copy []
+        while [not tail? b] [
+            element: first b
+            either block? element [
+                append flattened flatten element
+            ] [
+                append flattened element
+            ]
+            b: next b
+        ]
+        flattened
+    ]
+
+    spec: make block! 0
+    flattenedBlock: flatten block
+
+    ; the block will only be parsed correctly if it's flattened
+    parse flattenedBlock [
         any [
             set word word! (
                 if (strict-equal? first to-string word #"?") [

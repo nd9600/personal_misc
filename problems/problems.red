@@ -118,7 +118,7 @@ probe pack [1 1 1 2 2 3 3 3 4 5 5 6]
 
 ; 10
 rle: function[b][
-    f_map function[e][reduce [length? e first e]] pack b
+    f_map lambda [reduce [length? ? first ?]] pack b
 ]
 
 qprint rle block
