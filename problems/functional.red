@@ -8,10 +8,9 @@ Red [
 ;apply: function [f args][do compose [f (args)] ]
 
 lambda: func [
-    "makes lambda functions, doesn't work for nested blocks- https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
+    "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
     block [block!] "the function to make"
 ] [
-
     flatten: function[b][
         flattened: copy []
         while [not tail? b] [
