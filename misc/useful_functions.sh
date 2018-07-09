@@ -21,7 +21,7 @@ gbranch() {
 
 gshow() {
     re='^[0-9]+$'
-    if [[ -z "$1" ]] || (! [[ $1 =~ $re ]])
+    if [[ -z "$1" ]] || (! [[ $1 =~ $re ]]) # checks if the first argument doesn't exist or isn't a number
     then
         git show
     else
