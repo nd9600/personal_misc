@@ -51,6 +51,9 @@ container_redis_flushall() {
 
 ##fzf
 
+# makes fzf ignore .git and .gitignore patterns by default
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
@@ -64,7 +67,9 @@ fe() {
 fd() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
+            -o -type d -print 2> /dev/null \
+        | awk '!/node_modules/ && !/app\/build/' \
+        | fzf +m) &&
   cd "$dir"
 }
 
