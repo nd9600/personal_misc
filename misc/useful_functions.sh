@@ -29,6 +29,10 @@ gshow() {
     fi
 }
 
+function aws_mount_remote {
+    sshfs aws:/home/nathan/local ~/aws/remote/
+}
+
 container_freetobook() {
     docker exec -it freetobook-docker_php_1 bash
 }
