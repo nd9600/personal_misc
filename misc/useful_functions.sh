@@ -16,7 +16,7 @@ gpush() {
 
 gbranch() {
 	git checkout -b "$1"
-        git push -u # sets the local's branches upstream
+    git push -u # sets the local's branches upstream
 }
 
 gshow() {
@@ -29,6 +29,15 @@ gshow() {
     fi
 }
 
+gupdateandmerge() {
+    branchToMergeWith="$1"
+    currentBranch=$(git rev-parse --abbrev-ref HEAD)
+    git checkout "$branchToMergeWith"
+    git pull
+    git checkout "$currentBranch"
+    git merge "$branchToMergeWith"
+}
+
 function aws_mount_remote {
     sshfs aws:/home/nathan/local ~/aws/remote/
 }
@@ -39,6 +48,10 @@ container_freetobook() {
 
 container_freetobook_logs() {
     docker exec -it freetobook-docker_php_1 tail -f /var/log/php_error_log
+}
+
+container_freetobook_repl() {
+    docker exec -it freetobook-docker_php_1 sh -c "cd /var/www && ./vendor/bin/psysh"
 }
 
 container_portal() {
