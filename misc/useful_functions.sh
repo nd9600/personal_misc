@@ -15,8 +15,16 @@ gpush() {
 }
 
 gbranch() {
-	git checkout -b "$1"
+    git checkout -b "$1"
     git push -u # sets the local's branches upstream
+}
+
+gco() {
+    git checkout "$1"	
+}
+
+psr2() {
+    vendor/bin/phpcbf --standard=psr2 --report=diff app/
 }
 
 gshow() {
