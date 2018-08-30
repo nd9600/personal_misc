@@ -66,6 +66,10 @@ container_portal() {
     docker exec -it freetobook-docker_php_portal_1 bash
 }
 
+container_portal_logs() {
+    docker exec -it freetobook-docker_php_portal_1 tail -f /var/www/storage/logs/laravel.log
+}
+
 container_redis_flushall() {
     docker exec -it freetobook-docker_redis_portal_1 redis-cli flushall
 }
