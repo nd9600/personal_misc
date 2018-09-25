@@ -50,8 +50,21 @@ function aws_mount_remote {
     sshfs aws:/home/nathan/local ~/aws/remote/
 }
 
+docker_up() {
+    # brackets make it run in a subshell
+    (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it freetobookdocker_db_1 mysql -pchangeme --execute="SET GLOBAL sql_mode=''")
+}
+
+docker_down() {
+    (cd ~/repos/freetobook-docker/ && docker-compose down)
+}
+
+docker_db_fix() {
+    docker exec -it freetobook-docker_db_1 mysql -pchangeme --execute="SET GLOBAL sql_mode=''"
+}
+
 container_freetobook() {
-    docker exec -it freetobook-docker_php_1 bash
+    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www"
 }
 
 container_freetobook_logs() {
@@ -59,11 +72,11 @@ container_freetobook_logs() {
 }
 
 container_freetobook_repl() {
-    docker exec -it freetobook-docker_php_1 sh -c "cd /var/www && ./vendor/bin/psysh"
+    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www && ./vendor/bin/psysh"
 }
 
 container_portal() {
-    docker exec -it freetobook-docker_php_portal_1 bash
+    docker exec -it freetobook-docker_php_portal_1 bash -i
 }
 
 container_portal_logs() {
