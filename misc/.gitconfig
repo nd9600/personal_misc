@@ -1,0 +1,26 @@
+[user]
+	email = nd9600@gmail.com
+	name = Nathan Douglas
+[push]
+	default = current
+[alias]
+	unstage = reset HEAD --
+    find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+    show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
+	co = checkout
+[core]
+	pager = /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
+[color]
+  ui = always
+[color "diff"]
+  commit = green
+  meta = yellow
+  frag = cyan
+  old = red
+  new = green
+  whitespace = red reverse
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
