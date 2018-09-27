@@ -64,7 +64,7 @@ docker_db_fix() {
 }
 
 container_freetobook() {
-    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www"
+    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www; exec '${SHELL:-sh}'"
 }
 
 container_freetobook_logs() {
