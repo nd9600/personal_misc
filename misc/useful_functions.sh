@@ -47,7 +47,7 @@ gupdateandmerge() {
 }
 
 function aws_mount_remote {
-    sshfs aws:/home/nathan/local ~/aws/remote/
+    sshfs aws:/home/ubuntu/local ~/aws/remote/
 }
 
 docker_up() {
