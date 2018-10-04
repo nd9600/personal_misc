@@ -1,0 +1,35 @@
+{
+    "php.executablePath": "/usr/bin/php",
+    "window.zoomLevel": 0,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "vue"
+      ],
+
+     // A multiplier to be used on the `deltaX` and `deltaY` of mouse wheel scroll events
+    "editor.mouseWheelScrollSensitivity": 0.75,
+
+    // "workbench.colorCustomizations": {
+    //     "editor.background": "#1a1c1e",
+    //     "editor.foreground": "#ccc",
+    // },
+    // "editor.tokenColorCustomizations": {
+    //     "comments": "#777",
+    //     "numbers": "#ff8000",
+    //     "types": "#e12d66",
+    //     "functions": "#e12d66",
+    //     "keywords": "#e12d66",
+    //     "variables": "#25d0f0",
+    //     "strings": "#65ff00"
+    // },
+    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "workbench.editor.enablePreview": false,
+    "editor.wordWrap": "on",
+    "editor.fontFamily": "'Hack', 'monospace', monospace, 'Hack Fallback'",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "breadcrumbs.enabled": false,
+    "editor.minimap.enabled": true,
+    "terminal.integrated.rendererType": "dom",
+    "red.autocomplete": false
+}
