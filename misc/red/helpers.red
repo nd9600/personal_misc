@@ -11,23 +11,25 @@ encap: function [
     "execute a block as a function! without polluting the global scope" 
     b [block!]
 ] [
-    do function [] b
+    functionToExecute: function [] :b
+    functionToExecute
 ]
-
-pipe: function [
-    "Pipes the first argument 'x to the second 'f: does [f x]"
-    x [any-type!] "the argument to pass into 'f"
-    f [any-function! block!] {the function to call, can be like a function! like ":square", or a block! like "[add 2]" if you want to partially apply something}
-] [
-    fInBlock: either block? :f [
-        copy :f
+|>: encap [
+    pipe: function [
+        "Pipes the first argument 'x to the second 'f: does [f x]"
+        x [any-type!] "the argument to pass into 'f"
+        f [any-function! block!] {the function to call, can be like a function! like ":square", or a block! like "[add 2]" if you want to partially apply something}
     ] [
-        append copy [] :f
-    ]    
-    fAndArgument: append/only copy fInBlock x
-    do fAndArgument
+        fInBlock: either block? :f [
+            copy :f
+        ] [
+            append copy [] :f
+        ]    
+        fAndArgument: append/only copy fInBlock x
+        do fAndArgument
+    ]
+    make op! :pipe
 ]
-|>: make op! :pipe
 
 lambda: function [
         "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
