@@ -31,5 +31,8 @@
     "breadcrumbs.enabled": false,
     "editor.minimap.enabled": true,
     "terminal.integrated.rendererType": "dom",
-    "red.autocomplete": false
+    "red.autocomplete": false,
+    "files.associations": {
+        "*.r": "red"
+    }
 }
