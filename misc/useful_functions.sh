@@ -60,31 +60,59 @@ docker_down() {
 }
 
 docker_db_fix() {
-    docker exec -it freetobook-docker_db_1 mysql -pchangeme --execute="SET GLOBAL sql_mode=''"
+    c=freetobook-docker_db_1
+    if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
+      c=freetobookdocker_db_1
+    fi
+    docker exec -it $c mysql -pchangeme --execute="SET GLOBAL sql_mode=''"
 }
 
 container_freetobook() {
-    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www; exec '${SHELL:-sh}'"
+    c=freetobook-docker_php_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
+      c=freetobookdocker_php_1
+    fi
+    docker exec -it $c bash -ic "cd /var/www; exec '${SHELL:-sh}'"
 }
 
 container_freetobook_logs() {
-    docker exec -it freetobook-docker_php_1 tail -f /var/log/php_error_log
+    c=freetobook-docker_php_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
+      c=freetobookdocker_php_1
+    fi
+    docker exec -it $c tail -f /var/log/php_error_log
 }
 
 container_freetobook_repl() {
-    docker exec -it freetobook-docker_php_1 bash -ic "cd /var/www && ./vendor/bin/psysh"
+    c=freetobook-docker_php_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
+      c=freetobookdocker_php_1
+    fi
+    docker exec -it $c bash -ic "cd /var/www && ./vendor/bin/psysh"
 }
 
 container_portal() {
-    docker exec -it freetobook-docker_php_portal_1 bash -i
+    c=freetobook-docker_php_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_portal_1)" ]; then
+      c=freetobookdocker_php_portal_1
+    fi
+    docker exec -it $c bash -i
 }
 
 container_portal_logs() {
-    docker exec -it freetobook-docker_php_portal_1 tail -f /var/www/storage/logs/laravel.log
+    c=freetobook-docker_php_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_portal_1)" ]; then
+      c=freetobookdocker_php_portal_1
+    fi
+    docker exec -it $c tail -f /var/www/storage/logs/laravel.log
 }
 
 container_redis_flushall() {
-    docker exec -it freetobook-docker_redis_portal_1 redis-cli flushall
+    c=freetobook-docker_redis_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_redis_portal_1)" ]; then
+      c=freetobookdocker_redis_portal_1
+    fi
+    docker exec -it $c redis-cli flushall
 }
 
 ##fzf
