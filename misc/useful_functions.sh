@@ -20,11 +20,11 @@ gbranch() {
 }
 
 gco() {
-    git checkout "$1"	
+    git checkout "$1"
 }
 
-psr2() {
-    vendor/bin/phpcbf --standard=psr2 --report=diff app/
+gpull() {
+    git fetch && git pull
 }
 
 gshow() {
@@ -46,7 +46,11 @@ gupdateandmerge() {
     git merge "$branchToMergeWith"
 }
 
-function aws_mount_remote {
+psr2() {
+    vendor/bin/phpcbf --standard=psr2 --report=diff app/
+}
+
+aws_mount_remote() {
     sshfs aws:/home/ubuntu/local ~/aws/remote/
 }
 
