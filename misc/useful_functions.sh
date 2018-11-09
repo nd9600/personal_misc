@@ -24,7 +24,9 @@ gco() {
 }
 
 gpull() {
-    git fetch && git pull
+    rm .git/refs/remotes/origin/*
+    git fetch
+    git pull
 }
 
 gshow() {
