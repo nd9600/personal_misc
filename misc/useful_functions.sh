@@ -57,8 +57,13 @@ aws_mount_remote() {
 }
 
 docker_up() {
+    c=freetobook-docker_db_1
+    if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
+      c=freetobookdocker_db_1
+    fi
+
     # brackets make it run in a subshell
-    (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it freetobookdocker_db_1 mysql -pchangeme --execute="SET GLOBAL sql_mode=''")
+    (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it $c mysql -pchangeme --execute="SET GLOBAL sql_mode=''")
 }
 
 docker_down() {
