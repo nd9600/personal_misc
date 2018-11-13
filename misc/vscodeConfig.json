@@ -34,5 +34,6 @@
     "red.autocomplete": false,
     "files.associations": {
         "*.r": "red"
-    }
+    },
+    "explorer.openEditors.visible": 0
 }
