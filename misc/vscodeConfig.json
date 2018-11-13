@@ -35,5 +35,6 @@
     "files.associations": {
         "*.r": "red"
     },
-    "explorer.openEditors.visible": 0
+    "explorer.openEditors.visible": 0,
+    "php.suggest.basic": false
 }
