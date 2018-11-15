@@ -9,6 +9,34 @@
 
      // A multiplier to be used on the `deltaX` and `deltaY` of mouse wheel scroll events
     "editor.mouseWheelScrollSensitivity": 0.75,
+    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "workbench.editor.enablePreview": false,
+    "editor.wordWrap": "on",
+    "files.exclude": { 
+        "**/node_modules": true,
+        "**/vendor": true 
+    },
+    "workbench.list.openMode": "doubleClick",
+    "editor.fontFamily": "'Hack', 'monospace', monospace, 'Hack Fallback'",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "breadcrumbs.enabled": false,
+    "editor.minimap.enabled": true,
+    "terminal.integrated.rendererType": "dom",
+    "red.autocomplete": false,
+    "files.associations": {
+        "*.r": "red"
+    },
+    "explorer.openEditors.visible": 0,
+    "php.suggest.basic": false,
+
+    // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is true.
+    "editor.tabSize": 4,
+
+    // Insert spaces when pressing Tab. This setting is overriden based on the file contents when `editor.detectIndentation` is true.
+    "editor.insertSpaces": true,
+
+    // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be detected based on the file contents. Set to false to keep the values you've explicitly set, above.
+    "editor.detectIndentation": false
 
     // "workbench.colorCustomizations": {
     //     "editor.background": "#1a1c1e",
@@ -23,18 +51,4 @@
     //     "variables": "#25d0f0",
     //     "strings": "#65ff00"
     // },
-    "workbench.colorTheme": "Darcula Theme from IntelliJ",
-    "workbench.editor.enablePreview": false,
-    "editor.wordWrap": "on",
-    "editor.fontFamily": "'Hack', 'monospace', monospace, 'Hack Fallback'",
-    "typescript.updateImportsOnFileMove.enabled": "always",
-    "breadcrumbs.enabled": false,
-    "editor.minimap.enabled": true,
-    "terminal.integrated.rendererType": "dom",
-    "red.autocomplete": false,
-    "files.associations": {
-        "*.r": "red"
-    },
-    "explorer.openEditors.visible": 0,
-    "php.suggest.basic": false
 }
