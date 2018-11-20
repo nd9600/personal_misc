@@ -5,6 +5,8 @@ Red [
     License: "MIT"
 ]
 
+; removing "export block!" or "export ALL" from the file to load as a module, encap'ing it, do'ing it, then extracting the variables from the current scope might work
+
 a: copy [b: 1 c: 2 d: [4 5 6] export [d c]]
 
 exporting: copy []
