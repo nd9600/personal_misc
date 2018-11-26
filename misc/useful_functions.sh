@@ -48,6 +48,11 @@ gupdateandmerge() {
     git merge "$branchToMergeWith"
 }
 
+gdeletemerged() {
+    git branch --merged master --no-color | grep -v '^* master$' | xargs -n1 -r git branch -d
+    git pull
+}
+
 psr2() {
     vendor/bin/phpcbf --standard=psr2 --report=diff app/
 }
