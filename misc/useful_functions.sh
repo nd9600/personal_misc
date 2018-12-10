@@ -48,7 +48,8 @@ gupdateandmerge() {
     git merge "$branchToMergeWith"
 }
 
-gdeletemerged() {
+gcleanupbranches() {
+    git fetch -p
     git branch --merged master --no-color | grep -v '^* master$' | xargs -n1 -r git branch -d
     git pull
 }
