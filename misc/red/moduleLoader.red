@@ -5,28 +5,42 @@ Red [
     License: "MIT"
 ]
 
-; removing "export block!" or "export ALL" from the file to load as a module, encap'ing it, do'ing it, then extracting the variables from the current scope might work
+a: copy [b: 1 c: b + 10 d: [4 5 6] export [d c e] e: c * 12]
 
-a: copy [b: 1 c: 2 d: [4 5 6] export [d c]]
+import: function [
+    "Imports variables from a block!, file! or string!, without polluting the current scope. Variables can be defined as functions of other, non-exported variables"
+    input [block! file! string!] "the thing to import, like [b: 1 c: b + 10 d: [4 5 6] export [d c e] e: c * 12]"
+] [
+    inputAsBlock: case [
+        block? input [input]
+        any [file? input string? input] [load input]
+    ]
 
-exporting: copy []
-output: copy []
+    ?? input
+    ?? inputAsBlock
 
-; find variables to export
-parse a [thru 'export copy d skip (append exporting first d)]
+    ; find variables to export, and remove [export block!] from the argument
+    blockWithoutExport: copy []
+    exportingVariables: copy []
+    parse inputAsBlock [
+        copy toExport to ['export block!] 
+        skip copy exportingBlock skip (
+            append exportingVariables first exportingBlock
+        )
+        copy fromExportToEnd thru end
+    ]
+    append blockWithoutExport toExport
+    append blockWithoutExport fromExportToEnd
+    blockAsObject: context blockWithoutExport
 
-; append variables to output
-parse a [any [
-    to set-word! copy data [skip skip] (
-        variable: to-word first data
-        exportingAll: not none? find exporting 'ALL
-        exportingVariable: not none? find exporting variable
-        if any [exportingAll exportingVariable] [
-            append/only output data
-        ]
-        unset 'variable
-    )
-]]
+    ; extract the variables from the current scope
+    bitThatReturnsVariables: copy []
+    foreach variableToExport exportingVariables [
+        append bitThatReturnsVariables reduce [to-set-word :variableToExport 'get 'in 'blockAsObject to-lit-word :variableToExport]
+    ]
+    
+    context bitThatReturnsVariables
+]
 
-probe exporting
-probe output
+probe import a
+quit
