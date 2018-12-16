@@ -15,7 +15,7 @@ import: function [
         block? input [input]
         any [file? input string? input] [load input]
     ]
-    
+
     ; find variables to export, and remove [export block!] from the argument
     blockWithoutExport: copy []
     exportingVariables: copy []
@@ -33,7 +33,7 @@ import: function [
     ; extract the variables from the current scope
     bitThatReturnsVariables: copy []
     foreach variableToExport exportingVariables [
-        append bitThatReturnsVariables reduce [to-set-word :variableToExport 'get 'in 'blockAsObject to-lit-word :variableToExport]
+        append bitThatReturnsVariables compose [(to-set-word :variableToExport) get in blockAsObject (to-lit-word :variableToExport)]
     ]
     
     context bitThatReturnsVariables
