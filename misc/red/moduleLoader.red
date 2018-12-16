@@ -8,7 +8,7 @@ Red [
 a: copy [b: 1 c: b + 10 d: [4 5 6] export [d c e] e: c * 12]
 
 import: function [
-    "Imports variables from a block!, file! or string!, without polluting the current scope. Variables can be defined as functions of other, non-exported variables"
+    "Imports variables from a block!, file! or string!, without polluting the global scope. Variables can be defined as functions of other, non-exported variables"
     input [block! file! string!] "the thing to import, like [b: 1 c: b + 10 d: [4 5 6] export [d c e] e: c * 12]"
 ] [
     inputAsBlock: case [
