@@ -15,10 +15,7 @@ import: function [
         block? input [input]
         any [file? input string? input] [load input]
     ]
-
-    ?? input
-    ?? inputAsBlock
-
+    
     ; find variables to export, and remove [export block!] from the argument
     blockWithoutExport: copy []
     exportingVariables: copy []
