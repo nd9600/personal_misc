@@ -19,11 +19,11 @@ import: function [
     ; find variables to export, and remove [export block!] from the argument
     exportingVariables: copy []
     parse inputAsBlock [
-        copy toExport to ['export block!] 
-        skip copy exportingBlock skip (
+        copy toExport to 'export skip
+        copy exportingBlock block! (
             append exportingVariables first exportingBlock
         )
-        copy fromExportToEnd thru end
+        copy fromExportToEnd to end
     ]
     blockWithoutExport: compose [(toExport) (fromExportToEnd)]
     blockAsObject: context blockWithoutExport
