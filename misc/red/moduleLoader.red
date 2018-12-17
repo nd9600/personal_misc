@@ -17,7 +17,6 @@ import: function [
     ]
 
     ; find variables to export, and remove [export block!] from the argument
-    blockWithoutExport: copy []
     exportingVariables: copy []
     parse inputAsBlock [
         copy toExport to ['export block!] 
@@ -26,8 +25,7 @@ import: function [
         )
         copy fromExportToEnd thru end
     ]
-    append blockWithoutExport toExport
-    append blockWithoutExport fromExportToEnd
+    blockWithoutExport: compose [(toExport) (fromExportToEnd)]
     blockAsObject: context blockWithoutExport
 
     ; extract the variables from the current scope
