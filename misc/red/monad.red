@@ -17,11 +17,18 @@ Just: make Maybe [
 Nothing: make Maybe [
     type: append self/type "Nothing"
 ]
-maybe-return: function [x] [make Just [data: x]]
-maybe-bind: function [m f] [
+
+maybeReturn: function [x [any-type!]] [make Just [data: x]]
+maybeBind: function [
+    m [object!] "the Maybe instance" 
+    f [any-function!] "the function to bind, should take an a! and return a Maybe-b!"
+] [
     case [
         m/is_type "Nothing" [return make Nothing []]
-        m/is_type "Just" [maybe-return (f m/data)]
+        m/is_type "Just" [f m/data]
     ]
 ]
-maybe->>=: make op! :maybe-bind
+maybe->>=: make op! :maybeBind
+
+; square: function [x][x ** 2]
+; (maybeReturn 3) maybe->>= lambda [maybeReturn square ?]    == Just 9
