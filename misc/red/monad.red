@@ -34,5 +34,4 @@ maybeBind: function [
 ]
 maybe->>=: make op! :maybeBind
 
-; square: function [x][x ** 2]
-; (maybeReturn 3) maybe->>= lambda [maybeReturn square ?]    == Just 9
+; square: function [x][x ** 2]        (maybeReturn 3) maybe->>= lambda [maybeReturn square ?]    == Just 9
