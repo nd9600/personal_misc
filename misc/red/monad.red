@@ -2,9 +2,13 @@ Red [
     Title: "Monads in Red"
 ]
 
-Monad: make object! [
-    type: copy ["Monad"]
+Object: make object! [
+    type: copy []
     is_type: function [type_string [string!]] [not none? find self/type type_string]
+]
+
+Monad: make Object [
+    type: append self/type "Monad"
 ]
 
 Maybe: make Monad [
