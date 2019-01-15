@@ -56,6 +56,7 @@ gcleanupbranches() {
 
 psr2() {
     vendor/bin/phpcbf --standard=psr2 --report=diff app/
+    gpush "psr2"
 }
 
 aws_mount_remote() {
