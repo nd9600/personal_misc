@@ -20,24 +20,22 @@ f: function [
 
     justStartToEnd: [startingSequence thru endingSequence]
 
-    recursiveOutputToAppend: copy ""
+    recursiveOutput: none
     startToEnd: [
         [
             startingSequence
             opt [copy foundInternalStructure thru justStartToEnd (
-                recursiveOutput: f copy foundInternalStructure 
-                    startingSequence endingSequence
-                recursiveOutputToAppend: recursiveOutput
+                recursiveOutput: f foundInternalStructure startingSequence endingSequence
             )]
             copy middle to endingSequence endingSequence
         ] (
             parsedMiddle: f middle startingSequence endingSequence
             blockToAppend: copy []
-            if greater? length? recursiveOutputToAppend 0 [
-                append blockToAppend recursiveOutputToAppend
+            either not none? recursiveOutput [
+                append/only output reduce [recursiveOutput parsedMiddle]
+            ] [
+                append/only output parsedMiddle
             ]
-            append blockToAppend parsedMiddle
-            append/only output blockToAppend
         )
     ]
 
@@ -53,26 +51,6 @@ f: function [
     parse str rules
     output
 ]
-
-{
-00  [
-    11  [
-         222 
-    ] 
-    333 
-] 
- 444
-}
-
-{
-00 a 
-    11 a 
-        222 
-    b 
-    333 
-b 
-444
-}
 
 str: "00 a 11 a 222 b 333 b 444"
 f str "a" "b"
