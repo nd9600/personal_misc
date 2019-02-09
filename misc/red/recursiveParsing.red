@@ -1,16 +1,5 @@
 Red []
 
-if_statement: [
-    [
-        "{%" any   "if" some   
-            copy ifCondition to "%}" "%}"
-        copy stringToCompile to
-        ["{%" any   "endif" any   "%}"]
-        ["{%" any   "endif" any   "%}"]
-    ]
-    ()
-]
-
 f: function [
     str [string!]
     startingSequence [string!]
