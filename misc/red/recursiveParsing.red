@@ -1,5 +1,32 @@
 Red []
 
+f2: function [
+    str [string!]
+] [
+    here: [where: (print "" print where)]
+    output: copy []
+
+    digit: charset "0123456789"
+    arrayRule: ["[" any [element] "]"]
+    element: [
+        copy data arrayRule here (
+            parsedArray: f2 data
+            loop length? parsedArray [remove back tail output]
+            append/only output parsedArray
+        )
+        | copy data digit here (
+            append output to-integer data
+        )
+    ]
+
+    parse str arrayRule
+    output
+]
+
+str: "[123[45]67]"
+probe f2 str
+
+comment [
 f: function [
     str [string!]
     startingSequence [string!]
@@ -43,3 +70,4 @@ f: function [
 
 str: "00 a 11 a 222 b 333 b 444"
 f str "a" "b"
+]
