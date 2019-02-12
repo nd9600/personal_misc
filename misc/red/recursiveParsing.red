@@ -2,6 +2,24 @@ Red []
 
 do %helpers.red
 
+f4: function [
+    str [string!]
+] [
+    output: copy []
+
+    while [not empty? str] [
+        char: first str
+        probe char
+        str: next str
+    ]
+
+    output
+]
+
+str: "[123[45]67]"
+probe f4 str
+
+comment [
 stack: make object! [
     s: copy []
     push: function [element /only] [
@@ -50,16 +68,14 @@ f3: function [
     arrayRule: [
         "[" (
             either not-equal? counter 0 [ 
-                newStackElementName: getNewStackElementName 
-                outputStack/push newStackElementName
+                outputStack/push getNewStackElementName
             ] [
                 counter: counter + 1
             ]
         )
         any [element]
         "]" (
-            currentStackElementName: outputStack/pop
-            currentStackElementValue: get to-word currentStackElementName
+            currentStackElementValue: get to-word outputStack/pop
             if (not outputStack/empty) [
                 append/only (get to-word outputStack/peek) currentStackElementValue
             ]
@@ -69,29 +85,6 @@ f3: function [
         arrayRule
         | copy data digit (
             append (get to-word outputStack/peek) to-integer data
-        )
-    ]
-
-    parse str arrayRule
-    output
-]
-
-f2: function [
-    str [string!]
-] [
-    here: [where: (print "" print where)]
-    output: copy []
-
-    digit: charset "0123456789"
-    arrayRule: ["[" any [element] "]"]
-    element: [
-        copy data arrayRule (
-            parsedArray: f2 data
-            loop length? parsedArray [remove back tail output]
-            append/only output parsedArray
-        )
-        | copy data digit (
-            append output to-integer data
         )
     ]
 
@@ -114,7 +107,44 @@ assert [(f3 "[123[45]]") == [1 2 3 [4 5]] ]
 assert [(f3 "[123[45]6]") == [1 2 3 [4 5] 6] ]
 assert [(f3 "[123[45]67]") == [1 2 3 [4 5] 6 7] ]
 
-comment [
+f2: function [
+    str [string!]
+] [
+    output: copy []
+
+    digit: charset "0123456789"
+    arrayRule: ["[" any [element] "]"]
+    element: [
+        copy data arrayRule (
+            parsedArray: f2 data
+            loop length? parsedArray [remove back tail output]
+            append/only output parsedArray
+        )
+        | copy data digit (
+            append output to-integer data
+        )
+    ]
+
+    parse str arrayRule
+    output
+]
+
+str: "[123[45]67]"
+probe f2 str
+
+assert [(f2 "[]") == [] ]
+assert [(f2 "[1]") == [1] ]
+assert [(f2 "[12]") == [1 2] ]
+assert [(f2 "[123]") == [1 2 3] ]
+assert [(f2 "[[]]") == [[]] ]
+assert [(f2 "[[1]2]") == [[1] 2] ]
+assert [(f2 "[[1][2]]") == [[1] [2]] ]
+assert [(f2 "[[1][2][[34]]]") == [[1] [2] [[3 4]]] ]
+assert [(f2 "[123[45]]") == [1 2 3 [4 5]] ]
+assert [(f2 "[123[45]6]") == [1 2 3 [4 5] 6] ]
+assert [(f2 "[123[45]67]") == [1 2 3 [4 5] 6 7] ]
+
+;comment [
 f: function [
     str [string!]
     startingSequence [string!]
@@ -156,6 +186,6 @@ f: function [
     output
 ]
 
-str: "00 a 11 a 222 b 333 b 444"
-f str "a" "b"
+str: "[123[45]67]"
+f str "[" "]"
 ]
