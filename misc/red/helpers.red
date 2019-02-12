@@ -60,6 +60,8 @@ lambda: function [
     function spec block
 ]
 
+alambda: function [fBlock args] [apply lambda fBlock args]
+
 f_map: function [
     "The functional map"
     f  [function!] "the function to use, as a lambda function" 
