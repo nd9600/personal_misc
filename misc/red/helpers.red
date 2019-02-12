@@ -101,3 +101,21 @@ f_filter: function [
     ]
     result
 ]
+
+assert: function [
+    "Raises an error if every value in 'conditions doesn't evaluate to true. Enclose variables in brackets to compose them"
+    conditions [block!]
+] [
+    any [
+        all conditions
+        do [
+            e: rejoin [
+                "assertion failed for: " mold/only conditions "," 
+                newline 
+                "conditions: [" mold compose/only conditions "]"
+            ] 
+            print e 
+            do make error! rejoin ["assertion failed for: " mold conditions]
+        ]
+    ]
+]
