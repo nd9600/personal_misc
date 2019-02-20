@@ -87,7 +87,7 @@ const map = (elementTransformer, array) => {
 // filter
 
 const gt2 = (element) => {
-    return element > 2;
+    return element > 5e3;
 }
 // a.filter(gt2)
 // .forEach(element => {
@@ -135,6 +135,7 @@ const filter = (predicate, array) => {
 //     )
 // });
 
+// ########################################
 // we want it to perform all the transformations on the first element of the collection before moving on to the second,
 // since the other way can't be parallelised, isn't lazy, and only works for arrays
 
@@ -222,21 +223,54 @@ const filtering = (predicate) => {
     return transducer;
 }
 
-const composedFilterAndMap = compose(
+const transducedFilterAndMap = compose(
     filtering(
-        compose(gt2, trace("2 filteringTransducer ele"))
+        gt2
     ),
     mapping(
         compose(inc, trace("2 mappingTransducer ele"))
     )
 );
+// a.reduce(
+//     transducedFilterAndMap(concat), 
+//     []
+// )
+// .forEach(element => {
+//     appendNode(
+//         trace("transducedFilterAndMap, element")(element)
+//     )
+// });
+
+// ########################################
+
+const transducedFilterAndMapNoLog = compose(
+    filtering(gt2),
+    mapping(inc)
+);
+
+a = [...Array(10e4).keys()];
+
+console.time("transducer");
 
 a.reduce(
-    composedFilterAndMap(concat), 
+    transducedFilterAndMapNoLog(concat), 
     []
 )
-.forEach(element => {
-    appendNode(
-        trace("composedFilterAndMap, element")(element)
-    )
-});
+console.timeEnd("transducer");
+
+
+
+
+
+console.time("no transducer");
+
+const filterAndMapNoLog = compose(
+    filterer(gt2),
+    mapper(inc)
+);
+
+a.reduce(
+    filterAndMapNoLog, 
+    []
+)
+console.timeEnd("no transducer");
