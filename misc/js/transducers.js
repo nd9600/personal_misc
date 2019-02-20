@@ -1,6 +1,8 @@
+// https://tgvashworth.com/2014/08/31/csp-and-transducers.html#transducers-in-js
+
 const trace = (msg) => {
     return (value) => {
-        console.log(msg, value);
+        console.log(msg + ":", value);
         return value;
     }
 }
@@ -119,15 +121,92 @@ const filter = (predicate, array) => {
     return array.reduce(reducingFunction, []);
 }
 
-filter(
-    compose(gt2, trace("filtering ele")), 
-    map(
-        compose(inc, trace("mapping ele")),
-        a
-    )
-)
+// performs the first transformation on the whole collection before moving on to the second
+// filter(
+//     compose(gt2, trace("1 filtering ele")), 
+//     map(
+//         compose(inc, trace(" 1mapping ele")),
+//         a
+//     )
+// )
+// .forEach(element => {
+//     appendNode(
+//         trace("abstracted filter with reduce, element")(element)
+//     )
+// });
+
+// we want it to perform all the transformations on the first element of the collection before moving on to the second,
+// since the other way can't be parallelised, isn't lazy, and only works for arrays
+
+// we need to pull out the array.reduce(), the initial value [], and the concat(accum, input)
+
+const mapper = (elementTransformer) => {
+    const reducingFunction = (accum, input) => {
+        return concat(accum, elementTransformer(input));
+    };
+    return reducingFunction;
+};
+const filterer = (predicate) => {
+    const reducingFunction = (accum, input) => {
+        return predicate(input)
+            ? concat(accum, input)
+            : accum;
+    };
+    return reducingFunction;
+}
+
+// a.reduce(mapper(inc), [])
+// .forEach(element => {
+//     appendNode(
+//         trace("mapper, element")(element)
+//     )
+// });
+// a.reduce(filterer(gt2), [])
+// .forEach(element => {
+//     appendNode(
+//         trace("filterer, element")(element)
+//     )
+// });
+
+// const x = (transformer, collection, init) => {
+//     return collection.reduce(transformer, init);
+// }
+// x(mapper(inc), a, [])
+// .forEach(element => {
+//     appendNode(
+//         trace("x, element")(element)
+//     )
+// });
+
+// reducing functions have the form (a, b) -> a
+// like concat, which is (a, b) => a.concat(b)
+// and ALSO like the reducing function inside mapper and filterer
+
+const id = x => x;
+// a.reduce(mapper(id), [])
+// .forEach(element => {
+//     appendNode(
+//         trace("id, element")(element)
+//     )
+// });
+
+const filtererDefinedWithMapper = (predicate) => {
+    // mapper(id) is just (accum, input) => {
+    //     return concat(accum, id(input));
+    // };
+
+    const reducingFunction = (accum, input) => {
+        return predicate(input)
+            ? mapper(
+                compose(trace("id inside mapper(id)"), id)
+            )(accum, input)
+            : accum;
+    };
+    return reducingFunction;
+};
+a.reduce(filtererDefinedWithMapper(gt2), [])
 .forEach(element => {
     appendNode(
-        trace("abstracted filter with reduce, element")(element)
+        trace("filtererDefinedWithMapper, element")(element)
     )
 });
