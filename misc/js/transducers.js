@@ -168,16 +168,6 @@ const filterer = (predicate) => {
 //     )
 // });
 
-// const x = (transformer, collection, init) => {
-//     return collection.reduce(transformer, init);
-// }
-// x(mapper(inc), a, [])
-// .forEach(element => {
-//     appendNode(
-//         trace("x, element")(element)
-//     )
-// });
-
 // reducing functions have the form (a, b) -> a
 // like concat, which is (a, b) => a.concat(b)
 // and ALSO like the reducing function inside mapper and filterer
@@ -197,16 +187,56 @@ const filtererDefinedWithMapper = (predicate) => {
 
     const reducingFunction = (accum, input) => {
         return predicate(input)
-            ? mapper(
-                compose(trace("id inside mapper(id)"), id)
-            )(accum, input)
+            ? mapper(id)(accum, input)
             : accum;
     };
     return reducingFunction;
 };
-a.reduce(filtererDefinedWithMapper(gt2), [])
+// a.reduce(filtererDefinedWithMapper(gt2), [])
+// .forEach(element => {
+//     appendNode(
+//         trace("filtererDefinedWithMapper, element")(element)
+//     )
+// });
+
+// pulling out concat
+
+const mapping = (elementTransformer) => {
+    const transducer = (combiner) => {
+        const reducingFunction = (accum, input) => {
+            return combiner(accum, elementTransformer(input));
+        };
+        return reducingFunction;
+    };
+    return transducer;
+};
+const filtering = (predicate) => {
+    const transducer = (combiner) => {
+        const reducingFunction = (accum, input) => {
+            return predicate(input)
+                ? combiner(accum, input)
+                : accum;
+        };
+        return reducingFunction;
+    }
+    return transducer;
+}
+
+const composedFilterAndMap = compose(
+    filtering(
+        compose(gt2, trace("2 filteringTransducer ele"))
+    ),
+    mapping(
+        compose(inc, trace("2 mappingTransducer ele"))
+    )
+);
+
+a.reduce(
+    composedFilterAndMap(concat), 
+    []
+)
 .forEach(element => {
     appendNode(
-        trace("filtererDefinedWithMapper, element")(element)
+        trace("composedFilterAndMap, element")(element)
     )
 });
