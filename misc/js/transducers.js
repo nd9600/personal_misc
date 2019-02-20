@@ -87,7 +87,7 @@ const map = (elementTransformer, array) => {
 // filter
 
 const gt2 = (element) => {
-    return element > 5e3;
+    return element < 2;
 }
 // a.filter(gt2)
 // .forEach(element => {
@@ -248,7 +248,7 @@ const transducedFilterAndMapNoLog = compose(
     mapping(inc)
 );
 
-a = [...Array(10e4).keys()];
+a = [...Array(10e3).keys()];
 
 console.time("transducer");
 
