@@ -133,6 +133,14 @@ container_redis_flushall() {
     docker exec -it $c redis-cli flushall
 }
 
+container_messaging() {
+    c=freetobook-docker_php_messaging_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php_messaging_1)" ]; then
+      c=freetobookdocker_php_messaging_1
+    fi
+    docker exec -it $c bash -i
+}
+
 ##fzf
 
 # makes fzf ignore .git and .gitignore patterns by default
