@@ -7,8 +7,8 @@ Red [
 ;apply: function [f args][do append copy [f] args]
 apply: function [f args][do compose [f (args)] ]
 
-found?: function [
-    "returns if 'e is in 's"
+contains?: function [
+    "returns if 's contains 'e"
     s [series!] "the series to search in"
     e [any-type!] "the element to search for"
 ] [
@@ -139,5 +139,5 @@ assert: function [
 ]
 
 export [
-    apply found? encap |> lambda f_map f_filter f_fold assert
+    apply contains? encap |> lambda f_map f_filter f_fold assert
 ]
