@@ -7,6 +7,14 @@ Red [
 ;apply: function [f args][do append copy [f] args]
 apply: function [f args][do compose [f (args)] ]
 
+found?: function [
+    "returns if 'e is in 's"
+    s [series!] "the series to search in"
+    e [any-type!] "the element to search for"
+] [
+    not none? find s e
+]
+
 encap: function [
     "execute a block as a function! without polluting the global scope" 
     b [block!]
@@ -32,9 +40,12 @@ encap: function [
 ]
 
 lambda: function [
-        "makes lambda functions - https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
-        block [block!] "the function to make"
-    ] [
+    "makes lambda functions - call like [lambda [? * 2]]"
+    ; https://gist.github.com/draegtun/11b0258377a3b49bfd9dc91c3a1c8c3d"
+    block [block!] "the function to make"
+    /applyArgs "immediately apply the lambda function to arguments"
+        args [any-type!] "the arguments to apply the function to, can be a block!"
+] [
     spec: make block! 0
 
     parse block [
@@ -57,10 +68,15 @@ lambda: function [
         do make error! {cannot match ? with ?name placeholders}
     ]
 
-    function spec block
+    f: function spec block
+    
+    either applyArgs [
+        argsAsBlock: either block? args [args] [reduce [args]]
+        apply :f argsAsBlock
+    ] [
+        :f
+    ]
 ]
-
-alambda: function [fBlock args] [apply lambda fBlock args]
 
 f_map: function [
     "The functional map"
@@ -77,7 +93,7 @@ f_map: function [
 
 f_fold: function [
     "The functional left fold"
-    f  [function!] "the function to use, as a lambda function" 
+    f [function!] "the function to use, as a lambda function" 
     init [any-type!] "the initial value"
     block [block!] "the block to fold"
 ] [
@@ -120,4 +136,8 @@ assert: function [
             do make error! rejoin ["assertion failed for: " mold conditions]
         ]
     ]
+]
+
+export [
+    apply found? encap |> lambda f_map f_filter f_fold assert
 ]
