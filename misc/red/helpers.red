@@ -15,6 +15,23 @@ contains?: function [
     not none? find s e
 ]
 
+flatten: function [
+    "flattens a block"
+    b [block!]
+] [
+    flattened: copy []
+    while [not tail? b] [
+        element: first b
+        either block? element [
+            append flattened flatten element
+        ] [
+            append flattened element
+        ]
+        b: next b
+    ]
+    flattened
+]
+
 encap: function [
     "execute a block as a function! without polluting the global scope" 
     b [block!]
@@ -46,9 +63,10 @@ lambda: function [
     /applyArgs "immediately apply the lambda function to arguments"
         args [any-type!] "the arguments to apply the function to, can be a block!"
 ] [
+    flattenedBlock: flatten block
     spec: make block! 0
 
-    parse block [
+    parse flattenedBlock [
         any [
             set word word! (
                 if (strict-equal? first to-string word #"?") [
@@ -138,6 +156,39 @@ assert: function [
     ]
 ]
 
+objectToString: function [
+    obj [object!]
+] [
+    words: words-of obj
+    values: values-of obj
+    str: copy ""
+    repeat i length? words [
+        append str rejoin [words/(i) ": " values/(i) "^/"]
+    ]
+    str
+]
+
+errorToString: function [
+    "adds the actual error string to the error so you can read it easily"
+    error [error!]
+] [
+    errorIDBlock: get error/id
+    arg1: to-string error/arg1
+    arg2: to-string error/arg2
+    arg3: to-string error/arg3
+    usefulError: bind to-block errorIDBlock 'arg1
+
+    ; adds a space in between each thing
+    usefulErrorString: form reduce reduce usefulError
+
+    fieldsWeWant: context [
+        near: error/near
+        where: error/where
+    ]
+
+    rejoin [usefulErrorString newline form errorIDBlock newline newline objectToString fieldsWeWant]
+]
+
 export [
-    apply contains? encap |> lambda f_map f_filter f_fold assert
+    apply contains? flatten encap |> lambda f_map f_filter f_fold assert objectToString errorToString
 ]
