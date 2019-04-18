@@ -118,9 +118,9 @@ container_portal() {
 }
 
 container_portal_logs() {
-    c=freetobook-docker_php_portal_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php_portal_1)" ]; then
-      c=freetobookdocker_php_portal_1
+    c=freetobook-docker_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
+      c=freetobookdocker_portal_1
     fi
     docker exec -it $c tail -f /var/www/storage/logs/laravel.log
 }
