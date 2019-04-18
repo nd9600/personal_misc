@@ -110,9 +110,9 @@ container_freetobook_repl() {
 }
 
 container_portal() {
-    c=freetobook-docker_php_portal_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php_portal_1)" ]; then
-      c=freetobookdocker_php_portal_1
+    c=freetobook-docker_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
+      c=freetobookdocker_portal_1
     fi
     docker exec -it $c bash -i
 }
