@@ -133,10 +133,10 @@ container_redis_flushall() {
     docker exec -it $c redis-cli flushall
 }
 
-container_messaging() {
-    c=freetobook-docker_php-messaging_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php-messaging_1)" ]; then
-      c=freetobookdocker_php-messaging_1
+container_messenger() {
+    c=freetobook-docker_php-messenger_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
+      c=freetobookdocker_php-messenger_1
     fi
     docker exec -it $c bash -ic "cd /var/www; exec '${SHELL:-sh}'"
 }
