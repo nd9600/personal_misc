@@ -40,6 +40,11 @@ function concat(array $array, $item) {
     return $array;
 }
 
+$concat = function(array $array, $item) {
+    array_push($array, $item);
+    return $array;
+};
+
 echom(1234);
 
 echom(
@@ -141,9 +146,11 @@ function filtering($predicate) {
     return $transducer;
 }
 
-$transducedFilterAndMap = compose(
+$transducedFilterAndMap = (compose(
     filtering($gt2),
     mapping($inc)
+))(
+    $concat
 );
 
 echom("transducer");
