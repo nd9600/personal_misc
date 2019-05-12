@@ -44,10 +44,14 @@ import: function [
         variableToExportAsLitWord: to-lit-word :variableToExport
 
         either (not none? find blockAsObject variableToExportAsLitWord) [
-            append bitThatReturnsVariables compose [(to-set-word :variableToExport) get in blockAsObject (variableToExportAsLitWord)]
+            append bitThatReturnsVariables compose/only [(to-set-word :variableToExport) get in blockAsObject (variableToExportAsLitWord)]
         ] [
             print rejoin [variableToExportAsLitWord " isn't exported in the input " type? input "!"]
         ]
     ]
     context bitThatReturnsVariables
 ]
+
+h: import/only [a: 1 b: 2 c: b * 2 d: function [][c + 1] export [d]] [d]
+probe h
+h/d
