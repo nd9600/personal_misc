@@ -149,14 +149,12 @@ function filtering($predicate) {
 $transducedFilterAndMap = (compose(
     filtering($gt2),
     mapping($inc)
-))(
-    $concat
-);
+));
 
 echom("transducer");
 
 echom(
-    array_reduce($a, $transducedFilterAndMap, []),
+    array_reduce($a, $transducedFilterAndMap($concat), []),
     "transducedFilterAndMap"
 );
 
