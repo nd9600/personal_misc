@@ -1,9 +1,12 @@
 <?php
-
 /**
  * a composable way to build algorithmic transformations
  */
 
+/**
+ * @param $value
+ * @param string $msg
+ */
 function echom($value, string $msg = "") {
     if ($msg !== "") {
         echo "$msg: ";

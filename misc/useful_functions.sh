@@ -141,10 +141,10 @@ container_messenger() {
     docker exec -it $c bash -ic "cd /var/www; exec '${SHELL:-sh}'"
 }
 
-container_messaging_logs() {
-    c=freetobook-docker_php-messaging_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php-messaging_1)" ]; then
-      c=freetobookdocker_php-messaging_1
+container_messenger_logs() {
+    c=freetobook-docker_php-messenger_1
+    if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
+      c=freetobookdocker_php-messenger_1
     fi
     docker exec -it $c tail -f /var/www/storage/logs/laravel.log
 }
