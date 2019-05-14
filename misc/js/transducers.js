@@ -7,7 +7,7 @@ const trace = (msg) => {
     }
 }
 
-const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
+const compose = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
 const appendNode = (nodeContent) => {
     const p = document.createElement("p");
@@ -35,7 +35,7 @@ let a = [1, 2, 3, 4];
 // map
 
 const inc = (input) => {
-    return input + 1;
+    return input * 10;
 };
 // a.map(inc)
 // .forEach(element => {
@@ -244,18 +244,19 @@ const transducedFilterAndMap = compose(
 // ########################################
 
 const transducedFilterAndMapNoLog = compose(
+    mapping(inc),
     filtering(gt2),
-    mapping(inc)
 );
 
 a = [...Array(10e3).keys()];
 
 console.time("transducer");
 
+console.log(
 a.reduce(
     transducedFilterAndMapNoLog(concat), 
     []
-)
+))
 console.timeEnd("transducer");
 
 
@@ -269,8 +270,9 @@ const filterAndMapNoLog = compose(
     mapper(inc)
 );
 
-a.reduce(
+console.log(
+    a.reduce(
     filterAndMapNoLog, 
     []
-)
+))
 console.timeEnd("no transducer");
