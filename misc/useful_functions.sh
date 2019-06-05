@@ -48,6 +48,35 @@ gupdateandmerge() {
     git merge "$branchToMergeWith"
 }
 
+gmergeto() {
+    branchToMergeWith="$1"
+    msg="$2"
+    currentBranch=$(git rev-parse --abbrev-ref HEAD)
+
+    gadd
+    gcommit "$msg"
+    git pull
+    git push --no-verify
+
+    git checkout "$branchToMergeWith"
+    git pull
+    git merge --no-ff "$currentBranch"
+    numberOfMergeConflicts=$(git diff --check | wc -l)
+
+    if [ "$numberOfMergeConflicts" -eq 0 ]
+    then
+        git push --no-verify
+        git checkout "$currentBranch"
+    else
+        if [ "$numberOfMergeConflicts" -eq 1 ]
+        then
+            echo "fix merge conflict before pushing"
+        else
+            echo "fix ${numberOfMergeConflicts} merge conflicts before pushing"
+        fi
+    fi
+}
+
 gcleanupbranches() {
     git fetch -p
     git branch --merged master --no-color | grep -v '^* master$' | xargs -n1 -r git branch -d
