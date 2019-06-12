@@ -61,7 +61,7 @@ gmergeto() {
     git checkout "$branchToMergeWith"
     git pull
     git merge --no-ff "$currentBranch"
-    numberOfMergeConflicts=$(git diff --check | wc -l)
+    numberOfMergeConflicts=$(expr $(git diff --check | wc -l) / 3) # there are 3 markers per conflict
 
     if [ "$numberOfMergeConflicts" -eq 0 ]
     then
