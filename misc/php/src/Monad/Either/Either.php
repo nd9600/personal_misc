@@ -10,6 +10,8 @@ use Exception;
 
 abstract class Either extends Monad
 {
+    const return = "App\Monad\Either\Either::return";
+    
     /**
      * @param $data
      * @return Right

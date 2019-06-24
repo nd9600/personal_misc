@@ -9,6 +9,8 @@ use App\Monad\Monad;
 
 abstract class Maybe extends Monad
 {
+    const return = "App\Monad\Maybe\Maybe::return";
+    
     /**
      * @param $data
      * @return Maybe

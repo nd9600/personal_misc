@@ -8,6 +8,7 @@ namespace Tests\Monad;
 use App\Monad\Maybe\Just;
 use App\Monad\Maybe\Maybe;
 use App\Monad\Maybe\Nothing;
+use App\Monad\Monad;
 use PHPUnit\Framework\TestCase;
 use Tests\LambdasAsMethods;
 
@@ -83,7 +84,7 @@ final class MaybeTest extends TestCase
             $m,
             Maybe::bind(
                 $m,
-                [Maybe::class, "return"]
+                Maybe::return
             )
         );
     }
@@ -98,7 +99,7 @@ final class MaybeTest extends TestCase
             $m,
             Maybe::bind(
                 $m,
-                [Maybe::class, "return"]
+                Maybe::return
             )
         );
     }

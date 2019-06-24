@@ -84,7 +84,7 @@ final class EitherTest extends TestCase
             $m,
             Either::bind(
                 $m,
-                [Either::class, "return"]
+                Either::return
             )
         );
     }
@@ -99,7 +99,7 @@ final class EitherTest extends TestCase
             $m,
             Either::bind(
                 $m,
-                [Either::class, "return"]
+                Either::return
             )
         );
     }
