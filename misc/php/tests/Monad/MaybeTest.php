@@ -223,6 +223,22 @@ final class MaybeTest extends TestCase
         $this->assertEquals(247, $result->getData());
     }
     
+    public function testMultipleBindsWithClassMethod()
+    {
+        $add1 = function (int $i): Maybe {
+            return new Just($i + 1);
+        };
+        
+        $m = new Just(123);
+        
+        /** @var Just $result */
+        $result = $m
+            ->bindClass($this->double)
+            ->bindClass($add1);
+        
+        $this->assertEquals(247, $result->getData());
+    }
+    
     public function testMultipleBindsWithCompose()
     {
         $m = new Just(123);

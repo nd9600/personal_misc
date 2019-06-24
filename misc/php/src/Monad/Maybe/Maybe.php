@@ -19,6 +19,11 @@ abstract class Maybe extends Monad
     }
     
     /**
+     * instance  Monad Maybe  where
+     *      (Just x) >>= k      = k x
+     *      Nothing  >>= _      = Nothing
+     *
+     *      return              = Just
      * @param Maybe $either
      * @param callable $f
      * @return Maybe

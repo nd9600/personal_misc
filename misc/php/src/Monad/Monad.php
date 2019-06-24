@@ -53,6 +53,17 @@ abstract class Monad
      */
     abstract static function bind(Monad $m, callable $f): Monad;
     
+    /*
+     * ########################################
+     *  helper functions
+     * ########################################
+     */
+    
+    public function bindClass(callable $f): Monad
+    {
+        return static::bind($this, $f);
+    }
+    
     /**
      * Allows you to do
      * ```

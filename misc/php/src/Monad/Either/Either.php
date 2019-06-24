@@ -20,6 +20,10 @@ abstract class Either extends Monad
     }
     
     /**
+     * instance Monad (Either e) where
+     *      return        = Right
+     *      Right m >>= k = k m
+     *      Left e  >>= _ = Left e
      * @param Either $either
      * @param callable $f
      * @return Either
@@ -48,12 +52,9 @@ abstract class Either extends Monad
      * @param callable $rightFunction
      * @return Either
      */
-    public function map(callable $rightFunction): Either
+    public function map(callable $rightFunction): Monad
     {
-        $isRight = get_class($this) === Right::class;
-        return $isRight
-            ? $rightFunction($this->getData())
-            : $this;
+        return $this->bindClass($rightFunction);
     }
     
     /**
