@@ -19,16 +19,16 @@ abstract class Maybe extends Monad
     }
     
     /**
-     * @param Maybe $maybe
+     * @param Maybe $either
      * @param callable $f
      * @return Maybe
      */
-    static function bind(Monad $maybe, callable $f): Monad
+    static function bind(Monad $either, callable $f): Monad
     {
-        $isJust = get_class($maybe) === Just::class;
+        $isJust = get_class($either) === Just::class;
         if ($isJust) {
-            /** @var Just $maybe */
-            return $f($maybe->getData());
+            /** @var Just $either */
+            return $f($either->getData());
         }
         return new Nothing();
     }
