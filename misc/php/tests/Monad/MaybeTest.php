@@ -225,10 +225,6 @@ final class MaybeTest extends TestCase
     
     public function testMultipleBindsWithCompose()
     {
-        $add1 = function (int $i): Maybe {
-            return new Just($i + 1);
-        };
-        
         $m = new Just(123);
     
         /** @var Just $result2 */
@@ -242,5 +238,41 @@ final class MaybeTest extends TestCase
             }
         );
         $this->assertEquals(247, $result2->getData());
+    }
+    
+    public function testGetOrElseWithJust()
+    {
+        $m = Maybe::return(123);
+        
+        /** @var Just $result */
+        $result = $m->getOrElse(456);
+        $this->assertEquals(123, $result->getData());
+    }
+    
+    public function testGetOrElseWithNothing()
+    {
+        $m = new Nothing();
+        
+        /** @var Just $result */
+        $result = $m->getOrElse(456);
+        $this->assertEquals(456, $result->getData());
+    }
+    
+    public function testFoldWithJust()
+    {
+        $m = Maybe::return(123);
+        
+        /** @var Just $result */
+        $result = $m->fold(1, $this->double);
+        $this->assertEquals(246, $result->getData());
+    }
+    
+    public function testFoldWithNothing()
+    {
+        $m = new Nothing();
+        
+        /** @var Just $result */
+        $result = $m->fold(1, $this->double);
+        $this->assertEquals(1, $result->getData());
     }
 }
