@@ -33,12 +33,9 @@ abstract class Either extends Monad
     static function bind(Monad $either, callable $f): Monad
     {
         $isRight = get_class($either) === Right::class;
-        if ($isRight) {
-            /** @var Right $either */
-            return $f($either->getData());
-        }
-        /** @var Left $either */
-        return $either;
+        return $isRight
+            ? $f($either->getData())
+            : $either;
     }
     
     /*
