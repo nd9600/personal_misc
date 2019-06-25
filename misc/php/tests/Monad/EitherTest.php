@@ -12,36 +12,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Tests\LambdasAsMethods;
 
-/**
- * Functors
- * fmap  :: (Functor f)     =>   (a -> b) -> f a -> f b
- *
- *
- *
- * Applicatives
- * (<*>) :: (Applicative f) => f (a -> b) -> f a -> f b
- *
- *
- *
- * Monads
- * return :: a -> m a
- * (>>=)  :: (Monad m)       => m a -> (a -> m b) -> m b
- *
- * Monad laws
- * Left identity
- *      f :: (a -> m b),
- *      return x >>= f    === f x
- *
- * Right identity
- *      m >>= return      === m
- *
- * Associativity
- *      f :: (a -> m b),
- *      g :: (c -> m d),
- *      (m >>= f) >>= g   === m >>= (\x -> f x >>= g)
- *
- */
-
 
 final class EitherTest extends TestCase
 {

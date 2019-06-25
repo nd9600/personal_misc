@@ -14,9 +14,30 @@ class Utils
     public static function compose(...$functions): callable
     {
         return array_reduce(
-            ($functions),
+            array_reverse($functions),
             function ($carry, $item) {
-                return function($x) use ($carry, $item) {
+                return function ($x) use ($carry, $item) {
+                    return $item($carry($x));
+                };
+            },
+            function ($f) {
+                return $f;
+            }
+        );
+    }
+    
+    /**
+     * Return a new function that composes all functions (left to right) in $functions into a single callable
+     *
+     * @param callable ...$functions
+     * @return callable
+     */
+    public static function pipe(...$functions): callable
+    {
+        return array_reduce(
+            $functions,
+            function ($carry, $item) {
+                return function ($x) use ($carry, $item) {
                     return $item($carry($x));
                 };
             },

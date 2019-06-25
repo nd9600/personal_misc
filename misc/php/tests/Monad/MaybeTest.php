@@ -8,39 +8,8 @@ namespace Tests\Monad;
 use App\Monad\Maybe\Just;
 use App\Monad\Maybe\Maybe;
 use App\Monad\Maybe\Nothing;
-use App\Monad\Monad;
 use PHPUnit\Framework\TestCase;
 use Tests\LambdasAsMethods;
-
-/**
- * Functors
- * fmap  :: (Functor f)     =>   (a -> b) -> f a -> f b
- *
- *
- *
- * Applicatives
- * (<*>) :: (Applicative f) => f (a -> b) -> f a -> f b
- *
- *
- *
- * Monads
- * return :: a -> m a
- * (>>=)  :: (Monad m)       => m a -> (a -> m b) -> m b
- *
- * Monad laws
- * Left identity
- *      f :: (a -> m b),
- *      return x >>= f    === f x
- *
- * Right identity
- *      m >>= return      === m
- *
- * Associativity
- *      f :: (a -> m b),
- *      g :: (c -> m d),
- *      (m >>= f) >>= g   === m >>= (\x -> f x >>= g)
- *
- */
 
 
 final class MaybeTest extends TestCase
@@ -50,11 +19,17 @@ final class MaybeTest extends TestCase
     /** @var callable */
     private $double;
     
+    /** @var callable */
+    private $add1;
+    
     protected function setUp(): void
     {
         parent::setUp();
         $this->double = function (int $i): Maybe {
             return new Just($i * 2);
+        };
+        $this->add1 = function (int $i): Maybe {
+            return new Just($i + 1);
         };
     }
     
@@ -208,16 +183,12 @@ final class MaybeTest extends TestCase
     
     public function testMultipleBinds()
     {
-        $add1 = function (int $i): Maybe {
-            return new Just($i + 1);
-        };
-        
         $m = new Just(123);
     
         /** @var Just $result */
         $result = Maybe::bind(
             Maybe::bind($m, $this->double),
-            $add1
+            $this->add1
         );
         
         
@@ -226,16 +197,12 @@ final class MaybeTest extends TestCase
     
     public function testMultipleBindsWithClassMethod()
     {
-        $add1 = function (int $i): Maybe {
-            return new Just($i + 1);
-        };
-        
         $m = new Just(123);
         
         /** @var Just $result */
         $result = $m
             ->bindClass($this->double)
-            ->bindClass($add1);
+            ->bindClass($this->add1);
         
         $this->assertEquals(247, $result->getData());
     }

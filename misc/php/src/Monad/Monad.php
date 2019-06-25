@@ -4,16 +4,42 @@ declare(strict_types=1);
 
 namespace App\Monad;
 
+use App\Applicative\Applicative;
+
 /**
- * Class Monad
- *
  * Functors
  * fmap  :: (Functor f)     =>   (a -> b) -> f a -> f b
+ *
+ * Functor laws
+ * ID law
+ *      fmap id === id
+ *
+ * Composing law
+ *      fmap (f . g) F = fmap f (fmap g F)
  *
  *
  *
  * Applicatives
- * (<*>) :: (Applicative f) => f (a -> b) -> f a -> f b
+ * class (Functor f) => Applicative f where
+ *      pure :: a -> f a
+ *      (<*>) :: f (a -> b) -> f a -> f b         (called apply)
+ *
+ * Applicative laws
+ * Fmap law
+ *      pure f <*> x = fmap f x
+ *
+ *
+ * Identity
+ *      pure id <*> v = v
+ *
+ * Homomorphism
+ *      pure f <*> pure x = pure (f x)
+ *
+ * Interchange
+ *      u <*> pure y = pure ($ y) <*> u
+ *
+ * Composition
+ *      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
  *
  *
  *
@@ -36,7 +62,7 @@ namespace App\Monad;
  *
  * @package App\Monad
  */
-abstract class Monad
+abstract class Monad extends Applicative
 {
     /**
      * return :: a -> m a
