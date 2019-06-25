@@ -35,7 +35,7 @@ abstract class Maybe extends Monad
         $isJust = get_class($maybe) === Just::class;
         return $isJust
             ? $f($maybe->getData())
-            : new Nothing();
+            : $maybe;
     }
     
     /*
