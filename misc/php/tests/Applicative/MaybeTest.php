@@ -153,21 +153,28 @@ class MaybeTest extends TestCase
     /**
      * `pure (.)` composes morphisms similarly to how `(.)` composes functions: applying the composed morphism `pure (.) <*> u <*> v` to w gives the same result as applying u to the result of applying v to w
      *      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
+     *
+     * <*> is left-associative, which means that pure (+) <*> Just 3 <*> Just 5 is the same as (pure (+) <*> Just 3) <*> Just 5
+     * pure (.) <*> u <*> v <*> w
+     * (pure (.) <*> u) <*> v <*> w
+     * ((pure (.) <*> u) <*> v) <*> w
      */
     public function testCompositionLaw()
     {
         $u = new Just($this->double);
         $v = new Just($this->add1);
         $w = new Just(3);
-        
+    
+        $composeAppliedToU = Maybe::apply(
+            Maybe::pure("App\Utils::compose"),
+            $u
+        );
+        $composeAndUAppliedToV = Maybe::apply(
+            $composeAppliedToU,
+            $v
+        );
         $lhs = Maybe::apply(
-            Maybe::apply(
-                Maybe::apply(
-                    Maybe::pure("App\Utils::compose"),
-                    $u
-                ),
-                $v
-            ),
+            $composeAndUAppliedToV,
             $w
         );
         
