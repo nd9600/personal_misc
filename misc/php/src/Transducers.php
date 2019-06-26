@@ -5,6 +5,17 @@ namespace App;
 
 /**
  * A composable way to build algorithmic transformations, which can be parallelised and done lazily, and the operations aren't tied to the input or output data structures
+ *
+ * Use like
+ * ```
+ * // performs all transformations on the first element of the collection before moving on to the second
+ * $transducedFilterAndMap = Utils::compose(
+ *      Transducers::map($double),
+ *      Transducers::filter($greaterThan2)
+ * );
+ *
+ * Utils::arrayTransduce($transducedFilterAndMap, [0, 1, 2, 3, 4, 5]) // [4, 6, 8, 10]
+ * ```
  */
 class Transducers
 {

@@ -29,7 +29,7 @@ $inc = function($x) {
 };
 
 $gt2 = function($x) {
-    return $x < 2;
+    return $x > 2;
 };
 
 // performs all transformations on the first element of the collection before moving on to the second
