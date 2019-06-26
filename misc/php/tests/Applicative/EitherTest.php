@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Applicative;
 
-use App\Monad\Maybe\Just;
-use App\Monad\Maybe\Maybe;
-use App\Monad\Maybe\Nothing;
+use App\Monad\Either\Right;
+use App\Monad\Either\Either;
+use App\Monad\Either\Left;
 use App\Utils;
 use PHPUnit\Framework\TestCase;
 use Tests\LambdasAsMethods;
@@ -36,7 +36,7 @@ use Tests\LambdasAsMethods;
  *
  * @package App\Applicative
  */
-class MaybeTest extends TestCase
+class EitherTest extends TestCase
 {
     use LambdasAsMethods;
     
@@ -60,58 +60,58 @@ class MaybeTest extends TestCase
     /**
      * pure f <*> x = fmap f x
      */
-    public function testFmapLawWithJust()
+    public function testFmapLawWithRight()
     {
-        $maybe = new Just(123);
+        $either = new Right(123);
         
         $this->assertEquals(
-            Maybe::fmap($this->double, $maybe),
-            Maybe::apply(Maybe::pure($this->double), $maybe)
+            Either::fmap($this->double, $either),
+            Either::apply(Either::pure($this->double), $either)
         );
     }
     
     /**
      * pure f <*> x = fmap f x
      */
-    public function testFmapLawWithNothing()
+    public function testFmapLawWithLeft()
     {
-        $maybe = new Nothing();
+        $either = new Left(456);
         
         $this->assertEquals(
-            Maybe::fmap($this->double, $maybe),
-            Maybe::apply(Maybe::pure($this->double), $maybe)
+            Either::fmap($this->double, $either),
+            Either::apply(Either::pure($this->double), $either)
         );
     }
     
     /**
      * pure id <*> f = f
      */
-    public function testIDLawWithJust()
+    public function testIDLawWithRight()
     {
         $id = function ($x) {
             return $x;
         };
-        $maybe = new Just(123);
+        $either = new Right(123);
         
         $this->assertEquals(
-            $maybe,
-            Maybe::apply(Maybe::pure($id), $maybe)
+            $either,
+            Either::apply(Either::pure($id), $either)
         );
     }
     
     /**
      * pure id <*> f = f
      */
-    public function testIDLawWithNothing()
+    public function testIDLawWithLeft()
     {
         $id = function ($x) {
             return $x;
         };
-        $maybe = new Nothing();
+        $either = new Left(456);
     
         $this->assertEquals(
-            $maybe,
-            Maybe::apply(Maybe::pure($id), $maybe)
+            $either,
+            Either::apply(Either::pure($id), $either)
         );
     }
     
@@ -120,12 +120,12 @@ class MaybeTest extends TestCase
      */
     public function testHomomorphismLaw()
     {
-        $applicative = Maybe::pure($this->double);
-        $applicative2 = Maybe::pure(123);
+        $applicative = Either::pure($this->double);
+        $applicative2 = Either::pure(123);
     
         $this->assertEquals(
-            Maybe::pure($this->double(123)),
-            Maybe::apply($applicative, $applicative2)
+            Either::pure($this->double(123)),
+            Either::apply($applicative, $applicative2)
         );
     }
     
@@ -135,14 +135,14 @@ class MaybeTest extends TestCase
      */
     public function testInterchangeLaw()
     {
-        $morphism = Maybe::pure($this->double);
+        $morphism = Either::pure($this->double);
         $value = 123;
-        $pureValue = Maybe::pure($value);
+        $pureValue = Either::pure($value);
         
         $this->assertEquals(
-            Maybe::apply($morphism, $pureValue),
-            Maybe::apply(
-                Maybe::pure(function ($f) use ($value) {
+            Either::apply($morphism, $pureValue),
+            Either::apply(
+                Either::pure(function ($f) use ($value) {
                     return $f($value);
                 }),
                 $morphism
@@ -154,32 +154,32 @@ class MaybeTest extends TestCase
      * `pure (.)` composes morphisms similarly to how `(.)` composes functions: applying the composed morphism `pure (.) <*> u <*> v` to w gives the same result as applying u to the result of applying v to w
      *      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
      *
-     * <*> is left-associative, which means that pure (+) <*> Just 3 <*> Just 5 is the same as (pure (+) <*> Just 3) <*> Just 5
+     * <*> is left-associative, which means that pure (+) <*> Right 3 <*> Right 5 is the same as (pure (+) <*> Right 3) <*> Right 5
      * pure (.) <*> u <*> v <*> w
      * (pure (.) <*> u) <*> v <*> w
      * ((pure (.) <*> u) <*> v) <*> w
      */
 //    public function testCompositionLaw()
 //    {
-//        $u = new Just($this->double);
-//        $v = new Just($this->add1);
-//        $w = new Just(3);
+//        $u = new Right($this->double);
+//        $v = new Right($this->add1);
+//        $w = new Right(3);
 //
-//        $composeAppliedToU = Maybe::apply(
-//            Maybe::pure("App\Utils::compose"),
+//        $composeAppliedToU = Either::apply(
+//            Either::pure("App\Utils::compose"),
 //            $u
 //        );
-//        $composeAndUAppliedToV = Maybe::apply(
+//        $composeAndUAppliedToV = Either::apply(
 //            $composeAppliedToU,
 //            $v
 //        );
-//        $lhs = Maybe::apply(
+//        $lhs = Either::apply(
 //            $composeAndUAppliedToV,
 //            $w
 //        );
 //
-//        $rhs = Maybe::apply(
-//            Maybe::apply(
+//        $rhs = Either::apply(
+//            Either::apply(
 //                $v,
 //                $w
 //            ),

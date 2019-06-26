@@ -5,11 +5,87 @@ declare(strict_types=1);
 namespace App\Monad\Either;
 
 
+use App\Applicative\Applicative;
+use App\Functor\Functor;
 use App\Monad\Monad;
 use Exception;
 
 abstract class Either extends Monad
 {
+    /*
+     * ########################################
+     *  Functor
+     * ########################################
+     */
+    
+    /**
+     * fmap :: (a -> b) -> f a -> f b
+     * fmap id        === id
+     * fmap (f . g) F === fmap f (fmap g F)
+     * @param callable $callable
+     * @param Functor $either
+     * @return Either
+     */
+    static function fmap(callable $callable, Functor $either): Functor
+    {
+        $isRight = get_class($either) === Right::class;
+        /** @var Right $either */
+        return $isRight
+            ? new Right($callable($either->getData()))
+            : $either;
+    }
+    
+    /*
+     *
+     *
+     *
+     *
+     *
+     *
+     * ########################################
+     *  Applicative
+     * ########################################
+     */
+    
+    const pure = "App\Monad\Either\Either::pure";
+    
+    /**
+     * pure :: a -> f a
+     * @param $data
+     * @return Applicative
+     */
+    static function pure($data): Applicative
+    {
+        return new Right($data);
+    }
+    
+    /**
+     * (<*>) :: f (a -> b) -> f a -> f b
+     * @param Applicative $applicative with function inside
+     * @param Applicative $secondApplicative with data inside
+     * @return Applicative
+     */
+    static function apply(Applicative $applicative, Applicative $secondApplicative): Applicative
+    {
+        $isRight = get_class($applicative) === Right::class;
+        /** @var Right $either */
+        return $isRight
+            ? static::fmap($applicative->getData(), $secondApplicative)
+            : $applicative;
+    }
+    
+    /*
+     *
+     *
+     *
+     *
+     *
+     *
+     * ########################################
+     *  Monad
+     * ########################################
+     */
+    
     const return = "App\Monad\Either\Either::return";
     
     /**

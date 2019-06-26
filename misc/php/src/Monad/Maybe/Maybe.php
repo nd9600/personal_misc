@@ -60,13 +60,15 @@ class Maybe extends Monad
     
     /**
      * (<*>) :: f (a -> b) -> f a -> f b
-     * @param Applicative $applicative
-     * @param Applicative $secondApplicative
+     * @param Applicative $applicative with function inside
+     * @param Applicative $secondApplicative with data inside
      * @return Applicative
      */
     static function apply(Applicative $applicative, Applicative $secondApplicative): Applicative
     {
         $isJust = get_class($applicative) === Just::class;
+    
+        /** @var Just $applicative */
         return $isJust
             ? static::fmap($applicative->getData(), $secondApplicative)
             : $applicative;
