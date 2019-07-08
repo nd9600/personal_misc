@@ -15,6 +15,8 @@ gpush() {
 }
 
 gbranch() {
+	# checks out a new branch and pushes it to the remote
+	
     git checkout -b "$1"
     git push -u --no-verify # sets the local's branches upstream
 }
@@ -24,12 +26,19 @@ gco() {
 }
 
 gpull() {
+	# resets all the references to the remote so your repo is up to date
     rm .git/refs/remotes/origin/*
     git fetch
     git pull
 }
 
 gshow() {
+	# shows a specific commit
+	# gshow = show most recent commit
+	# gshow 1 = show 2nd most recent commit
+	# gshow 2 = show 3rd most recent commit
+	# ...
+	
     re='^[0-9]+$'
     if [[ -z "$1" ]] || (! [[ $1 =~ $re ]]) # checks if the first argument doesn't exist or isn't a number
     then
@@ -40,6 +49,8 @@ gshow() {
 }
 
 gupdateandmerge() {
+	# switches to the branch from the first arg, pulls it, switches back to the original branch, and merges in the first argument
+	
     branchToMergeWith="$1"
     currentBranch=$(git rev-parse --abbrev-ref HEAD)
     git checkout "$branchToMergeWith"
@@ -49,14 +60,22 @@ gupdateandmerge() {
 }
 
 gmergeto() {
+	# merges this branch (if 2nd arg, push changes with msg from 2nd arg) into 1st argument, and if no merge conflicts, pushes, then switches back to original branch
+	
     branchToMergeWith="$1"
     msg="$2"
     currentBranch=$(git rev-parse --abbrev-ref HEAD)
 
-    gadd
-    gcommit "$msg"
-    git pull
-    git push --no-verify
+	if [[!  -z "$2" ]]
+	then
+		gadd
+		gcommit "$msg"
+		
+		git pull
+		git push --no-verify
+	else
+		git pull
+	fi
 
     git checkout "$branchToMergeWith"
     git pull
@@ -78,21 +97,22 @@ gmergeto() {
 }
 
 gcleanupbranches() {
+	# removes any branches locally that have been deleted from the remote - will remove master if you're not on it when you run the command
+	
     git fetch -p
     git branch --merged master --no-color | grep -v '^* master$' | xargs -n1 -r git branch -d
     git pull
 }
 
 psr2() {
+	# runs psr2 checks and fixes, and commits changes
     vendor/bin/phpcbf --standard=psr2 --report=diff app/
     gpush "psr2"
 }
 
-aws_mount_remote() {
-    sshfs aws:/home/ubuntu/local ~/aws/remote/
-}
-
 docker_up() {
+	# starts docker containers
+	
     c=freetobook-docker_db_1
     if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
       c=freetobookdocker_db_1
@@ -103,10 +123,14 @@ docker_up() {
 }
 
 docker_down() {
+	# stops docker containers
+	
     (cd ~/repos/freetobook-docker/ && docker-compose down)
 }
 
 docker_db_fix() {
+	# fixes annoying docker error
+	
     c=freetobook-docker_db_1
     if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
       c=freetobookdocker_db_1
@@ -115,6 +139,8 @@ docker_db_fix() {
 }
 
 container_freetobook() {
+	# switches to FTB docker container
+	
     c=freetobook-docker_php_1
     if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
       c=freetobookdocker_php_1
@@ -123,6 +149,8 @@ container_freetobook() {
 }
 
 container_freetobook_logs() {
+	# displays updating logs from FTB
+	
     c=freetobook-docker_php_1
     if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
       c=freetobookdocker_php_1
@@ -131,6 +159,8 @@ container_freetobook_logs() {
 }
 
 container_freetobook_repl() {
+	# opens a REPL in FTB
+	
     c=freetobook-docker_php_1
     if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
       c=freetobookdocker_php_1
@@ -139,6 +169,8 @@ container_freetobook_repl() {
 }
 
 container_portal() {
+	# switches to Portal docker container - for a REPL, just run `php artisan tinker`
+	
     c=freetobook-docker_portal_1
     if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
       c=freetobookdocker_portal_1
@@ -147,6 +179,8 @@ container_portal() {
 }
 
 container_portal_logs() {
+	# displays updating logs from Portal
+	
     c=freetobook-docker_portal_1
     if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
       c=freetobookdocker_portal_1
@@ -155,6 +189,8 @@ container_portal_logs() {
 }
 
 container_redis_flushall() {
+	# flushes Redis cache; needed when you change rates/property info etc. on FTB and want Portal to update
+	
     c=freetobook-docker_redis_portal_1
     if [ "$(docker ps -q -f name=freetobookdocker_redis_portal_1)" ]; then
       c=freetobookdocker_redis_portal_1
@@ -163,6 +199,8 @@ container_redis_flushall() {
 }
 
 container_messenger() {
+	# switches to Messenger docker container - for a REPL, just run `php artisan tinker`
+	
     c=freetobook-docker_php-messenger_1
     if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
       c=freetobookdocker_php-messenger_1
@@ -171,6 +209,8 @@ container_messenger() {
 }
 
 container_messenger_logs() {
+	# displays updating logs from Messenger
+	
     c=freetobook-docker_php-messenger_1
     if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
       c=freetobookdocker_php-messenger_1
