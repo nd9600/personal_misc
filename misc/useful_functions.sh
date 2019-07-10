@@ -66,15 +66,15 @@ gmergeto() {
     msg="$2"
     currentBranch=$(git rev-parse --abbrev-ref HEAD)
 
-	if [[!  -z "$2" ]]
+	if [[ -z "$2" ]]
 	then
+		git pull
+	else
 		gadd
 		gcommit "$msg"
 		
 		git pull
 		git push --no-verify
-	else
-		git pull
 	fi
 
     git checkout "$branchToMergeWith"
