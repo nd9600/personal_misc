@@ -74,7 +74,7 @@ gmergeto() {
 		gcommit "$msg"
 		
 		git pull
-		git push --no-verify
+		git push
 	fi
 
     git checkout "$branchToMergeWith"
@@ -84,7 +84,7 @@ gmergeto() {
 
     if [ "$numberOfMergeConflicts" -eq 0 ]
     then
-        git push --no-verify
+        git push
         git checkout "$currentBranch"
     else
         if [ "$numberOfMergeConflicts" -eq 1 ]
