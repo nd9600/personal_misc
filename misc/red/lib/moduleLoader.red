@@ -33,7 +33,9 @@ import: function [
         importAndExportIntersection: intersect exportingVariables wordsToImport
         
         if ((length? importAndExportIntersection) <> (length? wordsToImport)) [
-            print rejoin ["import and export lists are different: " difference exportingVariables wordsToImport]
+            print rejoin [
+                "import and export lists are different: #" difference exportingVariables wordsToImport "# is in the import list but not the import list"
+                ]
         ]
         importAndExportIntersection
     ] [
@@ -51,7 +53,3 @@ import: function [
     ]
     context bitThatReturnsVariables
 ]
-
-h: import/only [a: 1 b: 2 c: b * 2 d: function [][c + 1] export [d]] [d]
-probe h
-h/d
