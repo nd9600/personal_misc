@@ -10,8 +10,15 @@ import: function [
         wordsToImport [block!] "the word!s to import, like [a b]"
 ] [
     inputAsBlock: case [
-        block? input [input]
-        any [file? input string? input] [load input]
+        block? input [
+            input
+        ]
+        any [
+            file? input 
+            string? input
+        ] [
+            load input
+        ]
     ]
 
     ; find variables to export, and remove [export block!] from the argument
@@ -35,7 +42,7 @@ import: function [
         if ((length? importAndExportIntersection) <> (length? wordsToImport)) [
             print rejoin [
                 "import and export lists are different: #" difference exportingVariables wordsToImport "# is in the import list but not the import list"
-                ]
+            ]
         ]
         importAndExportIntersection
     ] [

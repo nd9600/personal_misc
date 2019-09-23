@@ -78,4 +78,25 @@ tests: context [
             none? in h 'c
         ]
     ]
+
+    testImportingWithDataThatShouldPersist: function [] [
+        routing: moduleLoader/import %tests/moduleLoader/fileToImport.red
+
+        routing/setRoutes [1 2 3]
+        assert [
+            (routing/routes) == [1 2 3]
+        ]
+    ]
+
+    ; won't work until I get op!s able to be made inside objects
+    ; testImportingOp: function [] [
+    ;     obj: moduleLoader/import [
+    ;         f: make op! function [x y] [x + y]
+    ;     ]
+
+    ;     probe obj
+    ;     assert [
+    ;         (obj/f 1 2) == 3
+    ;     ]
+    ; ]
 ]

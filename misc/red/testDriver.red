@@ -30,12 +30,13 @@ foreach testFile testFiles [
             testFileObject/:testFunction
         ] [
             strError: errorToString err
+            print strError
             print rejoin [
                 newline "#####" newline
                 newline
                 "test failure: " newline
                 "    " testFunction newline 
-                "    " "failed in file " testFile newline 
+                "    " "failed in file " testFile newline
             ]
             quit
         ]

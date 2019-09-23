@@ -184,7 +184,7 @@ assert: function [
             e: rejoin [
                 "assertion failed for: " mold/only conditions "," 
                 newline 
-                "conditions: [" mold compose/only conditions "]"
+                "conditions: " mold compose/only conditions
             ] 
             print e 
             do make error! rejoin ["assertion failed for: " mold conditions]
