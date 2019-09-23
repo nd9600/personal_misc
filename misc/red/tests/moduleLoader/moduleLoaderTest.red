@@ -83,6 +83,8 @@ tests: context [
         routing: moduleLoader/import %tests/moduleLoader/fileToImport.red
 
         routing/setRoutes [1 2 3]
+        ?? routing
+        quit
         assert [
             (routing/routes) == [1 2 3]
         ]
