@@ -1,12 +1,14 @@
 Red []
 
-routes: copy []
+routing: context [
+    routes: copy []
 
-setRoutes: func [
-    "sets the app's routes"
-    routeFilesToLoad [block!] "the routes to load, containing files or strings"
-] [
-    routes: routeFilesToLoad
+    setRoutes: func [
+        "sets the app's routes"
+        routeFilesToLoad [block!] "the routes to load, containing files or strings"
+    ] [
+        self/routes: routeFilesToLoad
+    ]
 ]
 
-export [routes setRoutes]
+export routing

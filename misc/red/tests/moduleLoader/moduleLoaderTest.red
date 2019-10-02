@@ -79,12 +79,71 @@ tests: context [
         ]
     ]
 
+    testImportingASingleThing: function [] [
+        h: moduleLoader/import [
+            a: 1 
+            b: 2 
+            c: b * 2 
+            d: function [][c + 1] 
+            export a
+        ]
+    
+        assert [
+            h == 1
+        ]
+    ]
+
+    testImportingASingleThingThatDependsOnSomethingElse: function [] [
+        h: moduleLoader/import [
+            a: 1 
+            b: 2 
+            c: b * 2 
+            d: function [][c + 1] 
+            export d
+        ]
+    
+        assert [
+            h == 5
+        ]
+    ]
+
+    testImportingASingleObject: function [] [
+        h: moduleLoader/import [
+            o: context [
+                block: []
+                _append: function [e] [append self/block e]
+                _clear: does [clear head self/block]
+            ] 
+            export o
+        ]
+    
+        assert [
+            empty? h/block
+        ]
+
+        h/_append 1234
+        assert [
+            not empty? h/block
+            (first h/block) == 1234
+        ]
+
+        h/_clear
+        assert [
+            empty? h/block
+        ]
+
+        h/_append [1 2 3]
+        assert [
+            not empty? h/block
+            (first next h/block) == 2
+            (last h/block) == 3
+        ]
+    ]
+
     testImportingWithDataThatShouldPersist: function [] [
         routing: moduleLoader/import %tests/moduleLoader/fileToImport.red
 
         routing/setRoutes [1 2 3]
-        ?? routing
-        quit
         assert [
             (routing/routes) == [1 2 3]
         ]

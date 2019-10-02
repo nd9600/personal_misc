@@ -21,19 +21,34 @@ import: function [
         ]
     ]
 
-    ; find variables to export, and remove [export block!] from the argument
+    ; find variables to export, and remove "export block!" from the block
     exportingVariables: copy []
+
+    ; find the single variable to export, and remove "export word!" from the block
+    thingToExport: copy []
+
+    isExportingSingleVariable: false
     parse inputAsBlock [
         copy toExport to 'export skip
-        copy exportingBlock block! (
-            append exportingVariables first exportingBlock
-        )
+        [
+            copy exportingBlock block! (
+                append exportingVariables first exportingBlock ; it's a block! of a block! for some reason, so we need to get the actual word!s out of it
+            )
+        |
+            copy thingToExport word! (
+                isExportingSingleVariable: true
+                thingToExport: first thingToExport ; it's a block! for some reason, so we need to get the actual word! out of it
+            )
+        ]
         copy fromExportToEnd to end
     ]
     if any [
         not value? 'toExport
         none? toExport
-        empty? exportingVariables
+        all [
+            empty? exportingVariables
+            none? thingToExport
+        ]
     ] [
         print rejoin [
             "couldn't export anything from " newline 
@@ -45,30 +60,36 @@ import: function [
     blockWithoutExport: compose [(toExport) (fromExportToEnd)]
     blockAsObject: context blockWithoutExport
 
-    ; extract the variables from the current scope
-    bitThatReturnsVariables: copy []
-    
-    finalVariablesToExport: either only [
-        importAndExportIntersection: intersect exportingVariables wordsToImport
+    return either isExportingSingleVariable [
+        get in blockAsObject thingToExport
+    ] [
+        ; extract the variables from the current scope
+        bitThatReturnsVariables: copy []
         
-        if ((length? importAndExportIntersection) <> (length? wordsToImport)) [
-            print rejoin [
-                "import and export lists are different: #" difference exportingVariables wordsToImport "# is in the import list but not the import list"
+        finalVariablesToExport: either only [
+            importAndExportIntersection: intersect exportingVariables wordsToImport
+            
+            if ((length? importAndExportIntersection) <> (length? wordsToImport)) [
+                print rejoin [
+                    "import and export lists are different: #" difference exportingVariables wordsToImport "# is in the import list but not the import list"
+                ]
+            ]
+            importAndExportIntersection
+        ] [
+            exportingVariables
+        ]
+            
+        foreach variableToExport finalVariablesToExport [
+            variableToExportAsLitWord: to-lit-word :variableToExport
+
+            either (not none? find blockAsObject variableToExportAsLitWord) [
+                append bitThatReturnsVariables compose/only [
+                    (to-set-word :variableToExport) get in blockAsObject (variableToExportAsLitWord)
+                ]
+            ] [
+                print rejoin [variableToExportAsLitWord " isn't exported in the input " type? input "!"]
             ]
         ]
-        importAndExportIntersection
-    ] [
-        exportingVariables
+        context bitThatReturnsVariables
     ]
-           
-    foreach variableToExport finalVariablesToExport [
-        variableToExportAsLitWord: to-lit-word :variableToExport
-
-        either (not none? find blockAsObject variableToExportAsLitWord) [
-            append bitThatReturnsVariables compose/only [(to-set-word :variableToExport) get in blockAsObject (variableToExportAsLitWord)]
-        ] [
-            print rejoin [variableToExportAsLitWord " isn't exported in the input " type? input "!"]
-        ]
-    ]
-    context bitThatReturnsVariables
 ]
