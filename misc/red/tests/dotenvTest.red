@@ -5,10 +5,11 @@ Red [
 dotenv: context load %lib/dotenv.red
 
 tests: context [
-    dotenv/loadEnv/env {
-        ABC="1234"
-    }
     testItLoadsFromAString: does [
+        dotenv/loadEnv/env {
+            ABC="1234"
+        }
+
         assert [
             (get-env "ABC") == "1234"
         ]

@@ -19,15 +19,13 @@ loadEnv: function [
         envSource [file! string!]
 ] [
     envContent: either envSource [
-        switch/default type?/word envSource [
+        switch type?/word envSource [
             file! [
                 read envSource
             ]
             string! [
-                probe envSource
+                envSource
             ]
-        ] [
-            probe type? envSource
         ]
     ] [
         read %.env
