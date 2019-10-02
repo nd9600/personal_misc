@@ -19,7 +19,7 @@ loadEnv: function [
         envSource [file! string!]
 ] [
     envContent: either envSource [
-        switch/default type? envSource [
+        switch/default type?/word envSource [
             file! [
                 read envSource
             ]
@@ -32,10 +32,9 @@ loadEnv: function [
     ] [
         read %.env
     ]
-    ?? envSource
-    probe type? envSource
 
     lines: (split envContent newline)
+        |> [f_map lambda [trim ?]]
         |> [f_filter lambda [not empty? ?]]
 
     foreach line lines [

@@ -10,7 +10,7 @@ tests: context [
     }
     testItLoadsFromAString: does [
         assert [
-            (get-env "ABC") == 1234
+            (get-env "ABC") == "1234"
         ]
     ]
 ]
