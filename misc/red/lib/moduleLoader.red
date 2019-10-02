@@ -30,7 +30,7 @@ Red [
         #2
         ```
         do %moduleLoader.red
-        
+
         h: moduleLoader/import [
             o: context [
                 block: []
@@ -80,7 +80,7 @@ import: function [
         copy toExport to 'export skip
         [
             copy exportingBlock block! (
-                append exportingVariables first exportingBlock ; it's a block! of a block! for some reason, so we need to get the actual word!s out of it
+                append exportingVariables first exportingBlock
             )
         |
             copy thingToExport word! (
@@ -119,7 +119,9 @@ import: function [
             
             if ((length? importAndExportIntersection) <> (length? wordsToImport)) [
                 print rejoin [
-                    "import and export lists are different: #" difference exportingVariables wordsToImport "# is in the import list but not the import list"
+                    "import and export lists are different: #" 
+                    difference exportingVariables wordsToImport 
+                    "# is in the import list but not the import list"
                 ]
             ]
             importAndExportIntersection
