@@ -9,6 +9,8 @@ Red [
 
         #1
         ```
+        do %moduleLoader.red
+
         h: moduleLoader/import/only [
             a: 1 
             b: 2 
@@ -27,6 +29,8 @@ Red [
 
         #2
         ```
+        do %moduleLoader.red
+        
         h: moduleLoader/import [
             o: context [
                 block: []
