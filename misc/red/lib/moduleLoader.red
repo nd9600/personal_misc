@@ -1,10 +1,54 @@
 Red [
     Title: "Red Module loader"
     License: "MIT"
+    Description: {
+        Imports word!s from a block!, file! or string!, without polluting the global scope. word!s can be defined as functions of other, non-exported word!s
+    }
+    Usage: {
+        There are 2 ways to use this: exporting a block! of word!s, or exporting a single! word:
+
+        #1
+        ```
+        h: moduleLoader/import/only [
+            a: 1 
+            b: 2 
+            c: b * 2 
+            d: function [][c + 1] 
+            export [d]
+        ] [
+            d
+        ]
+    
+        assert [
+            (h/d) == (2 * 2 + 1)
+            none? in h 'c
+        ]
+        ```
+
+        #2
+        ```
+        h: moduleLoader/import [
+            o: context [
+                block: []
+                _append: function [e] [append self/block e]
+            ] 
+            export o
+        ]
+        assert [
+            empty? h/block
+        ]
+
+        h/_append 1234
+        assert [
+            not empty? h/block
+            (first h/block) == 1234
+        ]
+        ```
+    }
 ]
 
 import: function [
-    "Imports variables from a block!, file! or string!, without polluting the global scope. Variables can be defined as functions of other, non-exported variables"
+    "Imports word!s from a block!, file! or string!, without polluting the global scope. word!s can be defined as functions of other, non-exported word!s"
     input [block! file! string!] "the thing to import, like [b: 1 c: b + 10 d: [4 5 6] export [d c e] e: c * 12]"
     /only "only import some word!s"
         wordsToImport [block!] "the word!s to import, like [a b]"
