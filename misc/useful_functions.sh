@@ -119,7 +119,7 @@ docker_up() {
     fi
 
     # brackets make it run in a subshell
-    (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it $c root -pchangeme --execute="SET GLOBAL sql_mode=''")
+    (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it $c mysql -u root -pchangeme --execute="SET GLOBAL sql_mode=''")
 }
 
 docker_down() {
