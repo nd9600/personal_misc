@@ -118,6 +118,10 @@ docker_up() {
       c=freetobookdocker_db_1
     fi
 
+    if service apache2 status | grep -q "(running)"; then
+      sudo service apache2 stop
+    fi
+
     # brackets make it run in a subshell
     (cd ~/repos/freetobook-docker/ && docker-compose up -d && docker exec -it $c mysql -u root -pchangeme --execute="SET GLOBAL sql_mode=''")
 }
