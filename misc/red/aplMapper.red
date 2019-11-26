@@ -14,7 +14,24 @@ makeUrlFromPatternNumber: function [
     ]
 ]
 
+getPageTitle: function [
+    url [url!]
+] [
+    page: attempt [read url]
+    if not found? page [
+        return none
+    ]
+
+    numbers: charset "0123456789"
+    parse page [thru <title> 
+        any space some numbers any space 
+        copy title to </title>
+        ]
+    trim title
+]
+
 getLinksFromPage: function [
+    "from http://www.rebol.org/documentation.r?script=weblinks.r"
     url [url!]
 ] [
     tags: copy []
@@ -79,18 +96,20 @@ addLinksForPatternNumber: function [
 
 main: function [
 ] [
-    patternMap: make map! []
+    titleMap: make map! []
     
-    currentPatternNumber: 51
+    currentPatternNumber: 1
     while [
         currentPatternNumber <= 253
     ] [
-        addLinksForPatternNumber currentPatternNumber patternMap
+        put titleMap currentPatternNumber (getPageTitle makeUrlFromPatternNumber currentPatternNumber)
         currentPatternNumber: currentPatternNumber + 1
+
+        prettyPrint titleMap
     ]
 
-    prettyPrint patternMap
-    ; write %patternMap.txt patternMap
+    prettyPrint titleMap
+    ; write %titleMap.txt titleMap
 ]
 
 main
