@@ -132,16 +132,6 @@ docker_down() {
     (cd ~/repos/freetobook-docker/ && docker-compose down)
 }
 
-docker_db_fix() {
-	# fixes annoying docker error
-	
-    c=freetobook-docker_db_1
-    if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
-      c=freetobookdocker_db_1
-    fi
-    docker exec -it $c mysql -pchangeme --execute="SET GLOBAL sql_mode=''"
-}
-
 container_freetobook() {
 	# switches to FTB docker container
 	
