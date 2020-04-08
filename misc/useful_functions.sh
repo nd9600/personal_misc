@@ -65,16 +65,20 @@ gmergeto() {
     branchToMergeWith="$1"
     msg="$2"
     currentBranch=$(git rev-parse --abbrev-ref HEAD)
-
-	if [[ -z "$2" ]]
-	then
+    
+	if [[ -z "$2" ]]; then
 		git pull
-	else
+	elif [[ "$2" != "--no-verify" ]]; then
 		gadd
 		gcommit "$msg"
 		
 		git pull
-		git push
+        if [[ "$3" == "--no-verify" ]]
+        then
+            git push --no-verify
+        else
+            git push
+        fi
 	fi
 
     git checkout "$branchToMergeWith"
@@ -84,7 +88,12 @@ gmergeto() {
 
     if [ "$numberOfMergeConflicts" -eq 0 ]
     then
-        git push
+        if [[ "$2" == "--no-verify" ]]
+		then
+			git push --no-verify
+		else
+			git push
+		fi
         git checkout "$currentBranch"
     else
         if [ "$numberOfMergeConflicts" -eq 1 ]
