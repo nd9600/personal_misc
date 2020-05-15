@@ -88,7 +88,7 @@ gmergeto() {
 
     if [ "$numberOfMergeConflicts" -eq 0 ]
     then
-        if [[ "$2" == "--no-verify" ]]
+        if [[ "$2" == "--no-verify" || "$3" == "--no-verify" ]]
 		then
 			git push --no-verify
 		else
@@ -189,6 +189,14 @@ container_portal_logs() {
       c=freetobookdocker_portal_1
     fi
     docker exec -it $c tail -f /var/www/storage/logs/laravel.log
+}
+
+container_redis() {
+    c=freetobook-docker_redis_portal_1
+    if [ "$(docker ps -q -f name=freetobookdocker_redis_portal_1)" ]; then
+      c=freetobookdocker_redis_portal_1
+    fi
+    docker exec -it $c redis-cli
 }
 
 container_redis_flushall() {
