@@ -10,8 +10,9 @@ gcommit() {
 
 gpush() {
     gadd
-    gcommit "$1"
-    git push
+    if gcommit "$1"; then
+		git push
+	fi
 }
 
 gbranch() {
