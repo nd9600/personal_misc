@@ -258,3 +258,8 @@ fzfc() {
   #find ~/ | fzf-tmux | xargs "$1" # searches home dir
   fzf-tmux | xargs "$1"
 }
+
+ssh_testing() {
+    ssh -o ProxyCommand="ssh nathan@54.74.114.68 -W %h:%p" ec2-user@"$1" -i ~/.ssh/FTBTesting.pem
+}
+
