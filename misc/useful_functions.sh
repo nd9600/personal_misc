@@ -169,7 +169,7 @@ container_freetobook_repl() {
     if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
       c=freetobookdocker_php_1
     fi
-    docker exec -it $c bash -ic "cd /var/www && ./vendor/bin/psysh"
+    docker exec -it $c bash -ic "cd /var/www && php artisan tinker"
 }
 
 container_portal() {
