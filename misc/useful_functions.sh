@@ -50,10 +50,11 @@ gshow() {
 }
 
 gupdateandmerge() {
-	# switches to the branch from the first arg, pulls it, switches back to the original branch, and merges in the first argument
+	# merges the branch from the first arg with the current branch
 	
     branchToMergeWith="$1"
     currentBranch=$(git rev-parse --abbrev-ref HEAD)
+    git pull
     git checkout "$branchToMergeWith"
     git pull
     git checkout "$currentBranch"
