@@ -22,10 +22,6 @@ gbranch() {
     git push -u --no-verify # sets the local's branches upstream
 }
 
-gco() {
-    git checkout "$1"
-}
-
 gpull() {
 	# resets all the references to the remote so your repo is up to date
     rm .git/refs/remotes/origin/*
@@ -115,16 +111,10 @@ gcleanupbranches() {
     git pull
 }
 
-psr2() {
-	# runs psr2 checks and fixes, and commits changes
-    vendor/bin/phpcbf --standard=psr2 --report=diff app/
-    gpush "psr2"
-}
-
 docker_up() {
 	# starts docker containers
 	
-    c=freetobook-docker_db_1
+    c=freetobook-docker-db-1
     if [ "$(docker ps -q -f name=freetobookdocker_db_1)" ]; then
       c=freetobookdocker_db_1
     fi
@@ -143,40 +133,10 @@ docker_down() {
     (cd ~/repos/freetobook-docker/ && docker-compose down)
 }
 
-container_freetobook() {
-	# switches to FTB docker container
-	
-    c=freetobook-docker_php_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
-      c=freetobookdocker_php_1
-    fi
-    docker exec -it $c bash -ic "cd /var/www; exec '${SHELL:-sh}'"
-}
-
-container_freetobook_logs() {
-	# displays updating logs from FTB
-	
-    c=freetobook-docker_php_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
-      c=freetobookdocker_php_1
-    fi
-    docker exec -it $c tail -f /var/log/php_error_log
-}
-
-container_freetobook_repl() {
-	# opens a REPL in FTB
-	
-    c=freetobook-docker_php_1
-    if [ "$(docker ps -q -f name=freetobookdocker_php_1)" ]; then
-      c=freetobookdocker_php_1
-    fi
-    docker exec -it $c bash -ic "cd /var/www && php artisan tinker"
-}
-
 container_portal() {
 	# switches to Portal docker container - for a REPL, just run `php artisan tinker`
 	
-    c=freetobook-docker_portal_1
+    c=freetobook-docker-portal-1
     if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
       c=freetobookdocker_portal_1
     fi
@@ -186,7 +146,7 @@ container_portal() {
 container_portal_logs() {
 	# displays updating logs from Portal
 	
-    c=freetobook-docker_portal_1
+    c=freetobook-docker-portal-1
     if [ "$(docker ps -q -f name=freetobookdocker_portal_1)" ]; then
       c=freetobookdocker_portal_1
     fi
@@ -194,7 +154,7 @@ container_portal_logs() {
 }
 
 container_redis() {
-    c=freetobook-docker_redis_portal_1
+    c=freetobook-docker-redis_portal-1
     if [ "$(docker ps -q -f name=freetobookdocker_redis_portal_1)" ]; then
       c=freetobookdocker_redis_portal_1
     fi
@@ -204,7 +164,7 @@ container_redis() {
 container_redis_flushall() {
 	# flushes Redis cache; needed when you change rates/property info etc. on FTB and want Portal to update
 	
-    c=freetobook-docker_redis_portal_1
+    c=freetobook-docker-redis_portal-1
     if [ "$(docker ps -q -f name=freetobookdocker_redis_portal_1)" ]; then
       c=freetobookdocker_redis_portal_1
     fi
@@ -214,7 +174,7 @@ container_redis_flushall() {
 container_messenger() {
 	# switches to Messenger docker container - for a REPL, just run `php artisan tinker`
 	
-    c=freetobook-docker_php-messenger_1
+    c=freetobook-docker-php-messenger-1
     if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
       c=freetobookdocker_php-messenger_1
     fi
@@ -224,7 +184,7 @@ container_messenger() {
 container_messenger_logs() {
 	# displays updating logs from Messenger
 	
-    c=freetobook-docker_php-messenger_1
+    c=freetobook-docker-messenger_worker-1
     if [ "$(docker ps -q -f name=freetobookdocker_php-messenger_1)" ]; then
       c=freetobookdocker_php-messenger_1
     fi
@@ -259,8 +219,3 @@ fzfc() {
   #find ~/ | fzf-tmux | xargs "$1" # searches home dir
   fzf-tmux | xargs "$1"
 }
-
-ssh_testing() {
-    ssh -o ProxyCommand="ssh nathan@54.74.114.68 -W %h:%p" ec2-user@"$1" -i ~/.ssh/FTBTesting.pem
-}
-
